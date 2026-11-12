@@ -126,11 +126,12 @@ float rippleBump(vec2 p, float t){
     vec2 ip = uImpPos[i];
     float t0 = uImpTime[i];
     float dt = t - t0;
-    if(dt < 0.0 || dt > 3.0) continue;
+    if(dt < 0.0 || dt > 9.0) continue;
     float d = length(p - ip);
-    float travel = dt - d*1.7;
+    float st = dt * 0.3333;
+    float travel = st - d*1.7;
     float envelope = smoothstep(-0.34, -0.02, travel);
-    float amp = exp(-dt*2.4) * exp(-d*d*1.8);
+    float amp = exp(-st*2.4) * exp(-d*d*1.8);
     total += amp * envelope * rippleWave(p, ip, travel, t0, 10.0);
   }
   return total * 0.1;
@@ -147,11 +148,12 @@ vec3 rippleColor(vec2 p, float t, out float mag){
     vec2 ip = uImpPos[i];
     float t0 = uImpTime[i];
     float dt = t - t0;
-    if(dt < 0.0 || dt > 3.0) continue;
+    if(dt < 0.0 || dt > 9.0) continue;
     float d = length(p - ip);
-    float travel = dt - d*1.7;
+    float st = dt * 0.3333;
+    float travel = st - d*1.7;
     float envelope = smoothstep(-0.34, -0.02, travel);
-    float amp = exp(-dt*2.4) * exp(-d*d*1.8);
+    float amp = exp(-st*2.4) * exp(-d*d*1.8);
     float w = abs(amp * envelope * rippleWave(p, ip, travel, t0, 10.0));
     float sp = hash(vec2(t0*13.7, t0*7.3));
     vec3 c = mix(pink, green, step(0.333, sp));
