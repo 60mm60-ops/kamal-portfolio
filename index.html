@@ -720,22 +720,35 @@
   f.addEventListener('submit', function(e){
     e.preventDefault();
     var btn = f.querySelector('.send');
-    btn.disabled = true; btn.textContent = 'Sending...';
+    btn.disabled = true;
     var data = {
       name: q('name').value, email: q('email').value, message: q('message').value,
       _subject: 'Inquiry from the KAMAL portfolio', _template: 'table', _captcha: 'false'
     };
+    // Optimistic: show the thank-you immediately; the request continues in the background.
+    f.hidden = true;
+    var n = document.getElementById('sentNote');
+    if (n) n.hidden = false;
     fetch('https://formsubmit.co/ajax/04926de566687229ff7b33be185d9093', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
       body: JSON.stringify(data)
     }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(){
-        f.hidden = true;
-        var n = document.getElementById('sentNote');
-        if (n) n.hidden = false;
-      })
-      .catch(function(){ btn.disabled = false; btn.textContent = 'Send'; f.submit(); });
+      .catch(function(){
+        // Only matters if the visitor is still on the page: bring the form back with an error note.
+        if (n) n.hidden = true;
+        f.hidden = false;
+        btn.disabled = false; btn.textContent = 'Send';
+        var err = document.getElementById('sendError');
+        if (!err) {
+          err = document.createElement('p');
+          err.id = 'sendError';
+          err.style.cssText = 'color:#FFB3CB;font-size:14px;margin-top:10px';
+          err.textContent = 'Sending failed — please try once more.';
+          f.appendChild(err);
+        }
+      });
+  });
   });
 })();
 </script>
