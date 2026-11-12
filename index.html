@@ -164,6 +164,16 @@
   footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:13px}
   footer .mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em}
 @media (max-height:540px){.hero-content{padding-bottom:124px}.hero-hint{white-space:normal;max-width:92vw;text-align:center;line-height:1.55;bottom:12px}}
+.contact-form{max-width:36em;margin:26px auto 0;text-align:left}
+.contact-form label{display:block;margin-bottom:18px}
+.contact-form .fl{display:block;font-family:var(--mono);font-size:.78rem;font-weight:600;margin-bottom:6px;letter-spacing:.03em;color:#fff}
+.req{font-style:normal;font-family:var(--mono);font-size:.66rem;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px}
+.contact-form input[type=text],.contact-form input[type=email],.contact-form textarea{width:100%;border:none;border-bottom:1px solid rgba(255,255,255,.45);background:none;font:inherit;color:#fff;padding:8px 2px;border-radius:0;-webkit-appearance:none}
+.contact-form textarea{resize:vertical;line-height:1.75}
+.contact-form input:focus,.contact-form textarea:focus{outline:none;border-bottom-color:#fff}
+.contact-form ::placeholder{color:rgba(255,255,255,.55);opacity:1}
+.send{font-family:var(--mono);font-size:.88rem;font-weight:600;letter-spacing:.03em;color:var(--accent);background:#fff;border:1.5px solid #fff;border-radius:999px;padding:11px 34px;cursor:pointer;transition:background .5s,color .5s}
+.send:hover{background:transparent;color:#fff}
 </style>
 </head>
 <body>
@@ -266,7 +276,7 @@
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#tools">Touch the tools</a>
-        <a class="btn btn-ghost" href="mailto:60mm60@gmail.com">Get in touch</a>
+        <a class="btn btn-ghost" href="#contact">Get in touch</a>
       </div>
       <div class="badges">
         <span class="hot">BUILT ENTIRELY ON A SMARTPHONE</span>
@@ -410,7 +420,23 @@
       <p>Based in Nara, Japan (JST). Available worldwide as an independent contractor (B2B), paid to a
         Japanese bank account via Deel, Remote, Upwork or Contra. Async-first, in writing, across time zones.</p>
       <p style="margin-top:10px;font-size:14px;opacity:.85">I work under the name <b>KAMAL</b> — my legal name is provided at the contracting stage.</p>
-      <a class="btn btn-primary" href="mailto:60mm60@gmail.com">60mm60@gmail.com</a>
+      <form class="contact-form" action="https://formsubmit.co/wsdyuu@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Inquiry from the KAMAL portfolio">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <label>
+          <span class="fl">Name</span>
+          <input type="text" name="name" autocomplete="name">
+        </label>
+        <label>
+          <span class="fl">Email <em class="req">required</em></span>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="reply@example.com">
+        </label>
+        <label>
+          <span class="fl">Message <em class="req">required</em></span>
+          <textarea name="message" rows="5" required placeholder="Your project, your problem, your timeline"></textarea>
+        </label>
+        <button type="submit" class="send">Send</button>
+      </form>
     </div>
   </div>
 </section>
