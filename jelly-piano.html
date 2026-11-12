@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>jelly piano — ambient</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;background:#c7ddd8;overflow:hidden;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;width:100%;height:100%;touch-action:none}
+  .warn{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:#233;text-align:center;padding:24px;background:#c7ddd8}
+
+  /* 画面上端＝高い音、下端＝低い音。目盛りは触れる場所を示すだけの薄い印 */
+  .scale-hint{
+    position:fixed;right:14px;top:0;bottom:0;z-index:4;width:14px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:8vh 0;pointer-events:none;opacity:.42;
+  }
+  .scale-hint i{display:block;height:1px;background:rgba(20,45,40,.55)}
+  .scale-hint i:nth-child(odd){width:6px}
+  .scale-hint i:nth-child(even){width:11px}
+
+  .hint{
+    position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:1.1em;pointer-events:none;text-align:center;
+    transition:opacity 1.2s ease;
+  }
+  .hint .t{font-family:'Shippori Mincho',serif;font-size:19px;letter-spacing:.16em;
+    line-height:2.1;color:rgba(16,34,30,.82)}
+  .hint .s{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    color:rgba(16,34,30,.45)}
+  .hint.gone{opacity:0}
+
+  .ui{
+    position:fixed;left:0;right:0;bottom:0;z-index:6;
+    display:flex;gap:7px;justify-content:center;align-items:center;flex-wrap:wrap;
+    padding:14px 14px calc(16px + env(safe-area-inset-bottom));
+  }
+  .ui button{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;
+    padding:9px 15px;border-radius:999px;cursor:pointer;
+    border:1px solid rgba(20,45,40,.16);
+    background:rgba(255,255,255,.32);
+    -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+    color:rgba(16,36,32,.74);transition:background .25s,color .25s,border-color .25s;
+  }
+  .ui button.on{background:rgba(181,73,95,.86);color:#fff;border-color:transparent}
+  .ui button:focus-visible{outline:2px solid rgba(181,73,95,.9);outline-offset:2px}
+  .ui .sep{width:1px;height:18px;background:rgba(20,45,40,.14)}
+
+  .loopbar{position:fixed;left:0;bottom:0;height:2px;z-index:7;width:0;
+    background:rgba(181,73,95,.7);transition:opacity .3s;opacity:0}
+  .loopbar.live{opacity:1}
+
+  @media (prefers-reduced-motion: reduce){ .hint{transition:none} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="scale-hint" id="scaleHint"></div>
+
+<div class="hint" id="hint">
+  <p class="t">水面を、ぽちぽち</p>
+  <p class="s">UP = HIGH　/　DOWN = LOW　/　なぞると連なる</p>
+</div>
+
+<div class="ui">
+  <button id="btnLoop" aria-pressed="false">かさねる</button>
+  <button id="btnClear">きえる</button>
+  <span class="sep"></span>
+  <button id="btnScale">音階 : 陽</button>
+  <button id="btnDrone" aria-pressed="false">ドローン</button>
+</div>
+<div class="loopbar" id="loopbar"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl2', {antialias:false, alpha:false});
+
+if(!gl){
+  document.body.innerHTML = '<div class="warn">このブラウザは WebGL2 に対応していません。</div>';
+} else {
+
+const MAX_IMP = 16;
+
+const vsSrc = `#version 300 es
+in vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+const fsSrc = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec2 uImpPos[${MAX_IMP}];
+uniform float uImpTime[${MAX_IMP}];
+uniform float uImpHue[${MAX_IMP}];
+uniform float uImpAmp[${MAX_IMP}];
+uniform int uImpCount;
+
+float hash(vec2 p){
+  p = fract(p*vec2(123.34,456.21));
+  p += dot(p,p+45.32);
+  return fract(p.x*p.y);
+}
+float noise(vec2 p){
+  vec2 i=floor(p), f=fract(p);
+  float a=hash(i), b=hash(i+vec2(1.0,0.0)), c=hash(i+vec2(0.0,1.0)), d=hash(i+vec2(1.0,1.0));
+  vec2 u=f*f*(3.0-2.0*f);
+  return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+float fbm(vec2 p){
+  float v=0.0, a=0.5;
+  for(int i=0;i<4;i++){ v += a*noise(p); p *= 2.03; a *= 0.5; }
+  return v;
+}
+vec3 hsv2rgb(vec3 c){
+  vec3 p = abs(fract(c.xxx + vec3(0.0, 2.0/3.0, 1.0/3.0))*6.0 - 3.0);
+  return c.z * mix(vec3(1.0), clamp(p-1.0, 0.0, 1.0), c.y);
+}
+
+float sdRoundBox(vec3 p, vec3 b, float r){
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - r;
+}
+
+float rippleBump(vec2 p, float t){
+  float total = 0.0;
+  for(int i=0;i<${MAX_IMP};i++){
+    if(i>=uImpCount) break;
+    vec2 ip = uImpPos[i];
+    float dt = t - uImpTime[i];
+    if(dt < 0.0 || dt > 2.6) continue;
+    float d = length(p - ip);
+    float travel = dt - d*1.7;
+    float envelope = smoothstep(-0.17, -0.01, travel);
+    float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
+    total += amp * envelope * sin(travel*14.0);
+  }
+  return total * 0.045;
+}
+
+vec3 rippleColor(vec2 p, float t, out float mag){
+  vec3 colSum = vec3(0.0);
+  float wSum = 0.0;
+  for(int i=0;i<${MAX_IMP};i++){
+    if(i>=uImpCount) break;
+    vec2 ip = uImpPos[i];
+    float dt = t - uImpTime[i];
+    if(dt < 0.0 || dt > 2.6) continue;
+    float d = length(p - ip);
+    float travel = dt - d*1.7;
+    float envelope = smoothstep(-0.17, -0.01, travel);
+    float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
+    float w = abs(amp * envelope * sin(travel*14.0));
+    colSum += hsv2rgb(vec3(uImpHue[i], 0.5, 1.0)) * w;
+    wSum += w;
+  }
+  mag = clamp(wSum*13.0, 0.0, 1.0);
+  vec3 avgCol = colSum / max(wSum, 0.0001);
+  return mix(vec3(1.0), avgCol, step(0.0001, wSum));
+}
+
+float panelSDF(vec3 p, float t){
+  float d = sdRoundBox(p, vec3(0.86,1.18,0.032), 0.07);
+  float frost = fbm(p.xy*2.8 + vec2(0.0, t*0.045)) * 0.018;
+  float ripple = rippleBump(p.xy, t);
+  return d - frost - ripple;
+}
+
+vec3 calcNormal(vec3 p, float t){
+  vec2 e = vec2(0.0016, 0.0);
+  return normalize(vec3(
+    panelSDF(p+e.xyy,t) - panelSDF(p-e.xyy,t),
+    panelSDF(p+e.yxy,t) - panelSDF(p-e.yxy,t),
+    panelSDF(p+e.yyx,t) - panelSDF(p-e.yyx,t)
+  ));
+}
+
+vec3 background(vec3 rd){
+  float t = uTime*0.045;
+  vec2 uv = rd.xy*1.25 + rd.z*0.35;
+  float n1 = fbm(uv*1.5 + t);
+  vec3 base = vec3(0.780,0.867,0.847);
+  vec3 deep = vec3(0.690,0.784,0.760);
+  vec3 col = mix(deep, base, smoothstep(0.15,0.85,n1));
+  col += 0.01*sin(uv.x*22.0 + t*3.0);
+  return min(col, vec3(1.0));
+}
+
+vec3 frostedRefract(vec3 rd, vec3 n, vec2 seed){
+  const int N = 3;
+  const float ROUGH = 0.035;
+  vec3 rSum=vec3(0.0), gSum=vec3(0.0), bSum=vec3(0.0);
+  float eta = 1.0/1.24;
+  for(int k=0;k<N;k++){
+    float a = (float(k)/float(N))*6.2831853 + hash(seed+float(k)*1.37)*6.2831853;
+    vec3 nj = normalize(n + vec3(cos(a),sin(a),0.0)*ROUGH);
+    vec3 rr = refract(rd, nj, eta*0.982); if(dot(rr,rr) < 0.0001) rr = reflect(rd,nj);
+    vec3 rg = refract(rd, nj, eta);       if(dot(rg,rg) < 0.0001) rg = reflect(rd,nj);
+    vec3 rb = refract(rd, nj, eta*1.018); if(dot(rb,rb) < 0.0001) rb = reflect(rd,nj);
+    rSum += background(rr); gSum += background(rg); bSum += background(rb);
+  }
+  return vec3(rSum.r, gSum.g, bSum.b) / float(N);
+}
+
+vec3 frostedReflect(vec3 rd, vec3 n, vec2 seed){
+  const int N = 3;
+  const float ROUGH = 0.035;
+  vec3 sum = vec3(0.0);
+  for(int k=0;k<N;k++){
+    float a = (float(k)/float(N))*6.2831853 + hash(seed+float(k)*2.11+10.0)*6.2831853;
+    vec3 nj = normalize(n + vec3(cos(a),sin(a),0.0)*ROUGH);
+    sum += background(reflect(rd,nj));
+  }
+  return sum / float(N);
+}
+
+void main(){
+  vec2 uv = (gl_FragCoord.xy - 0.5*uRes.xy) / uRes.y;
+  vec3 ro = vec3(0.0, 0.0, 3.1);
+  vec3 rd = normalize(vec3(uv, -1.55));
+
+  float t = uTime;
+  float dist = 0.0;
+  vec3 p = ro;
+  bool hit = false;
+
+  for(int i=0;i<70;i++){
+    p = ro + rd*dist;
+    float d = panelSDF(p,t);
+    if(d < 0.0015){ hit = true; break; }
+    dist += d*0.82;
+    if(dist > 8.0) break;
+  }
+
+  vec3 col;
+  if(hit){
+    vec3 n = calcNormal(p,t);
+    vec3 viewDir = -rd;
+    float fresnel = pow(clamp(1.0 - max(dot(n,viewDir),0.0),0.0,1.0), 4.0);
+    fresnel = mix(0.04, 0.28, fresnel);
+
+    vec3 refrCol = frostedRefract(rd, n, p.xy*3.1);
+    vec3 reflCol = frostedReflect(rd, n, p.xy*3.1 + 5.5);
+    vec3 base = mix(refrCol, reflCol, fresnel);
+
+    vec3 lightDir = normalize(vec3(0.5,0.85,0.6));
+    vec3 halfV = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(n,halfV),0.0), 90.0);
+    base += vec3(1.0) * spec * 0.09;
+
+    float ripMag;
+    vec3 ripCol = rippleColor(p.xy, t, ripMag);
+    base += ripCol * ripMag * 0.12;
+
+    col = base;
+  } else {
+    col = background(rd);
+  }
+
+  vec2 vuv = gl_FragCoord.xy / uRes.xy;
+  float vig = smoothstep(0.95, 0.2, length(vuv - 0.5));
+  col *= mix(0.85, 1.0, vig);
+  col = pow(max(col,0.0), vec3(0.82));
+
+  fragColor = vec4(col, 1.0);
+}`;
+
+function compile(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSrc));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSrc));
+gl.linkProgram(prog);
+if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+
+const quad = new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+const aPos = gl.getAttribLocation(prog, 'aPos');
+gl.enableVertexAttribArray(aPos);
+gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+const uRes      = gl.getUniformLocation(prog, 'uRes');
+const uTime     = gl.getUniformLocation(prog, 'uTime');
+const uImpPos   = gl.getUniformLocation(prog, 'uImpPos');
+const uImpTime  = gl.getUniformLocation(prog, 'uImpTime');
+const uImpHue   = gl.getUniformLocation(prog, 'uImpHue');
+const uImpAmp   = gl.getUniformLocation(prog, 'uImpAmp');
+const uImpCount = gl.getUniformLocation(prog, 'uImpCount');
+
+/* ── 波紋のリングバッファ ── */
+const impPos  = new Float32Array(MAX_IMP*2);
+const impTime = new Float32Array(MAX_IMP);
+const impHue  = new Float32Array(MAX_IMP);
+const impAmp  = new Float32Array(MAX_IMP);
+let impWrite = 0, impCount = 0;
+const start = performance.now();
+function nowSec(){ return (performance.now()-start)*0.001; }
+
+function pushImpulse(x, y, hue, amp){
+  impPos[impWrite*2] = x;
+  impPos[impWrite*2+1] = y;
+  impTime[impWrite] = nowSec();
+  impHue[impWrite] = hue;
+  impAmp[impWrite] = amp;
+  impWrite = (impWrite+1) % MAX_IMP;
+  impCount = Math.min(impCount+1, MAX_IMP);
+}
+
+/* ═══════════ 音 ═══════════ */
+let actx=null, master=null, revIn=null, dryBus=null, wetSend=null;
+
+function makeIR(sec, decay){
+  const rate = actx.sampleRate, len = Math.floor(rate*sec);
+  const b = actx.createBuffer(2, len, rate);
+  for(let ch=0; ch<2; ch++){
+    const d = b.getChannelData(ch);
+    for(let i=0;i<len;i++){
+      const e = Math.pow(1 - i/len, decay);
+      d[i] = (Math.random()*2-1) * e * (i < rate*0.012 ? i/(rate*0.012) : 1);
+    }
+  }
+  return b;
+}
+
+function initAudio(){
+  if(actx) return;
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+
+  master = actx.createGain(); master.gain.value = 0.85;
+  const comp = actx.createDynamicsCompressor();
+  comp.threshold.value = -16; comp.knee.value = 26; comp.ratio.value = 3.2;
+  comp.attack.value = 0.012; comp.release.value = 0.35;
+  master.connect(comp); comp.connect(actx.destination);
+
+  const conv = actx.createConvolver();
+  conv.buffer = makeIR(4.6, 2.4);
+  const wetGain = actx.createGain(); wetGain.gain.value = 0.62;
+  const revTone = actx.createBiquadFilter();
+  revTone.type = 'lowpass'; revTone.frequency.value = 3400;
+  conv.connect(revTone); revTone.connect(wetGain); wetGain.connect(master);
+
+  const dly = actx.createDelay(2.5); dly.delayTime.value = 0.46;
+  const fb = actx.createGain(); fb.gain.value = 0.36;
+  const dTone = actx.createBiquadFilter();
+  dTone.type = 'lowpass'; dTone.frequency.value = 1900;
+  dly.connect(dTone); dTone.connect(fb); fb.connect(dly);
+  dly.connect(conv);
+
+  revIn = actx.createGain(); revIn.gain.value = 1;
+  revIn.connect(conv); revIn.connect(dly);
+
+  dryBus = actx.createGain(); dryBus.gain.value = 0.72;
+  dryBus.connect(master);
+
+  wetSend = actx.createGain(); wetSend.gain.value = 0.85;
+  wetSend.connect(revIn);
+}
+
+/* 音階：陽 / 陰(都節) / 洋(メジャーペンタ)。根音は D */
+const SCALES = [
+  {name:'陽', deg:[0,2,5,7,9]},
+  {name:'陰', deg:[0,1,5,7,8]},
+  {name:'洋', deg:[0,2,4,7,9]},
+];
+let scaleIdx = 0;
+let notes = [];
+function buildNotes(){
+  const deg = SCALES[scaleIdx].deg;
+  notes = [];
+  for(let oct=-2; oct<=2; oct++){
+    for(const d of deg){
+      const m = 62 + 12*oct + d;
+      if(m >= 40 && m <= 96) notes.push(m);
+    }
+  }
+  notes.sort((a,b)=>a-b);
+  drawScaleHint();
+}
+function midiToFreq(m){ return 440 * Math.pow(2, (m-69)/12); }
+function hueOf(m){ return 0.02 + 0.55 * Math.min(1, Math.max(0, (m-40)/56)); }
+
+function drawScaleHint(){
+  const box = document.getElementById('scaleHint');
+  box.innerHTML = '';
+  for(let i=0;i<notes.length;i++) box.appendChild(document.createElement('i'));
+}
+
+/* ピアノに寄せた倍音合成 */
+function playNote(midi, vel, panVal, when){
+  if(!actx) return;
+  const t0 = when || actx.currentTime;
+  const f = midiToFreq(midi);
+  const dur = Math.min(9, Math.max(1.9, 8.2 * Math.pow(261.6/f, 0.42)));
+
+  const out = actx.createGain();
+  out.gain.value = vel * 0.34;
+
+  const lp = actx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.setValueAtTime(Math.min(9000, f*9 + 1800*vel), t0);
+  lp.frequency.exponentialRampToValueAtTime(Math.max(420, f*2.2), t0 + dur*0.6);
+  lp.Q.value = 0.4;
+
+  const pan = actx.createStereoPanner ? actx.createStereoPanner() : null;
+  if(pan) pan.pan.value = panVal;
+
+  out.connect(lp);
+  if(pan){ lp.connect(pan); pan.connect(dryBus); pan.connect(wetSend); }
+  else   { lp.connect(dryBus); lp.connect(wetSend); }
+
+  const ratios = [1, 2.001, 3.004, 4.010, 5.02, 6.05, 8.09];
+  const amps   = [1, 0.44,  0.25,  0.13,  0.075, 0.04, 0.018];
+  const oscs = [];
+  for(let i=0;i<ratios.length;i++){
+    const hf = f * ratios[i];
+    if(hf > 15000) continue;
+    const o = actx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = hf;
+    o.detune.value = (Math.random()-0.5) * 3.5;
+    const g = actx.createGain();
+    const peak = amps[i] * (0.55 + 0.45*vel);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(peak, t0 + 0.006 + i*0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur/(1 + i*0.42));
+    o.connect(g); g.connect(out);
+    o.start(t0); o.stop(t0 + dur + 0.2);
+    oscs.push(o);
+  }
+
+  // ハンマーの当たり（ごく小さく）
+  const nb = actx.createBuffer(1, Math.floor(actx.sampleRate*0.06), actx.sampleRate);
+  const nd = nb.getChannelData(0);
+  for(let i=0;i<nd.length;i++) nd[i] = (Math.random()*2-1) * Math.pow(1 - i/nd.length, 3);
+  const ns = actx.createBufferSource(); ns.buffer = nb;
+  const nf = actx.createBiquadFilter();
+  nf.type = 'bandpass'; nf.frequency.value = Math.min(6000, f*3.2); nf.Q.value = 0.9;
+  const ng = actx.createGain(); ng.gain.value = 0.035 * vel;
+  ns.connect(nf); nf.connect(ng); ng.connect(out);
+  ns.start(t0); ns.stop(t0 + 0.08);
+
+  if(oscs.length){
+    oscs[0].onended = () => { try{ out.disconnect(); lp.disconnect(); if(pan) pan.disconnect(); }catch(e){} };
+  }
+}
+
+/* ドローン（低い持続音） */
+let drone = null;
+function setDrone(on){
+  if(!actx) return;
+  const t = actx.currentTime;
+  if(on && !drone){
+    const g = actx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.075, t + 5);
+    const lp = actx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 620; lp.Q.value = 0.7;
+    g.connect(lp); lp.connect(dryBus); lp.connect(wetSend);
+
+    const lfo = actx.createOscillator(); lfo.frequency.value = 0.045;
+    const lfoG = actx.createGain(); lfoG.gain.value = 260;
+    lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start(t);
+
+    const oscs = [];
+    [[36.7,0.9],[55.0,0.55],[73.4,0.4],[110.0,0.22]].forEach(([hz,a],i)=>{
+      const o = actx.createOscillator();
+      o.type = i < 2 ? 'sine' : 'triangle';
+      o.frequency.value = hz;
+      o.detune.value = (i%2 ? 5 : -5);
+      const og = actx.createGain(); og.gain.value = a;
+      o.connect(og); og.connect(g); o.start(t);
+      oscs.push(o);
+    });
+    drone = {g, oscs, lfo};
+  } else if(!on && drone){
+    const d = drone; drone = null;
+    d.g.gain.cancelScheduledValues(t);
+    d.g.gain.setValueAtTime(Math.max(d.g.gain.value, 0.0001), t);
+    d.g.gain.exponentialRampToValueAtTime(0.0001, t + 3.5);
+    d.oscs.forEach(o => o.stop(t + 3.8));
+    d.lfo.stop(t + 3.8);
+  }
+}
+
+/* ═══════════ ループ（かさねる） ═══════════ */
+const LOOP_LEN = 8.0;
+let loopOn = false, loopT0 = 0, prevPos = 0;
+let events = [];
+const loopbar = document.getElementById('loopbar');
+
+function loopPos(){ return actx ? (actx.currentTime - loopT0) % LOOP_LEN : 0; }
+function loopCycle(){ return actx ? Math.floor((actx.currentTime - loopT0) / LOOP_LEN) : 0; }
+
+function fireRange(a, b, cyc){
+  for(const e of events){
+    if(e.cycle === cyc) continue;
+    if(e.pos >= a && e.pos < b) trigger(e, false);
+  }
+}
+
+/* ═══════════ 入力 → 音 + 波紋 ═══════════ */
+function screenToLocal(clientX, clientY){
+  const rect = canvas.getBoundingClientRect();
+  const px = (clientX-rect.left) * (canvas.width/rect.width);
+  const py = (clientY-rect.top)  * (canvas.height/rect.height);
+  const uvx = (px - 0.5*canvas.width) / canvas.height;
+  const uvy = -((py - 0.5*canvas.height) / canvas.height);
+  const l = Math.hypot(uvx, uvy, -1.55);
+  const rd = [uvx/l, uvy/l, -1.55/l];
+  const tHit = 3.1 / (-rd[2]);
+  return [rd[0]*tHit, rd[1]*tHit];
+}
+
+function trigger(e, record){
+  playNote(e.midi, e.vel, e.pan);
+  pushImpulse(e.lx, e.ly, hueOf(e.midi), 0.55 + e.vel*0.75);
+  if(record && loopOn){
+    if(events.length >= 56) events.shift();
+    events.push({midi:e.midi, vel:e.vel, pan:e.pan, lx:e.lx, ly:e.ly,
+                 pos: loopPos(), cycle: loopCycle()});
+  }
+}
+
+function strike(clientX, clientY, vel){
+  initAudio();
+  if(actx.state === 'suspended') actx.resume();
+  const [lx, ly] = screenToLocal(clientX, clientY);
+  const yn = Math.min(1, Math.max(0, clientY / window.innerHeight));
+  const idx = Math.min(notes.length-1, Math.floor((1-yn) * notes.length));
+  const xn = Math.min(1, Math.max(0, clientX / window.innerWidth));
+  trigger({
+    midi: notes[idx],
+    vel: vel * (0.86 + Math.random()*0.14),
+    pan: (xn - 0.5) * 1.1,
+    lx, ly
+  }, true);
+  hideHint();
+}
+
+let hintGone = false;
+function hideHint(){
+  if(hintGone) return;
+  hintGone = true;
+  document.getElementById('hint').classList.add('gone');
+}
+
+let dragging = false, lastX = 0, lastY = 0, lastDragT = 0;
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId);
+  dragging = true;
+  strike(e.clientX, e.clientY, 0.62);
+  lastX = e.clientX; lastY = e.clientY; lastDragT = performance.now();
+});
+canvas.addEventListener('pointermove', e => {
+  if(!dragging) return;
+  const dist = Math.hypot(e.clientX-lastX, e.clientY-lastY);
+  const gap = performance.now() - lastDragT;
+  if(dist > 34 && gap > 130){
+    strike(e.clientX, e.clientY, 0.34);
+    lastX = e.clientX; lastY = e.clientY; lastDragT = performance.now();
+  }
+});
+const stopDrag = () => { dragging = false; };
+canvas.addEventListener('pointerup', stopDrag);
+canvas.addEventListener('pointercancel', stopDrag);
+
+/* ═══════════ ボタン ═══════════ */
+const btnLoop  = document.getElementById('btnLoop');
+const btnClear = document.getElementById('btnClear');
+const btnScale = document.getElementById('btnScale');
+const btnDrone = document.getElementById('btnDrone');
+
+btnLoop.addEventListener('click', () => {
+  initAudio();
+  if(actx.state === 'suspended') actx.resume();
+  loopOn = !loopOn;
+  btnLoop.classList.toggle('on', loopOn);
+  btnLoop.setAttribute('aria-pressed', String(loopOn));
+  loopbar.classList.toggle('live', loopOn);
+  if(loopOn){ loopT0 = actx.currentTime; prevPos = 0; }
+  else loopbar.style.width = '0';
+  hideHint();
+});
+
+btnClear.addEventListener('click', () => {
+  events = [];
+  loopbar.style.width = '0';
+  if(actx){ loopT0 = actx.currentTime; prevPos = 0; }
+});
+
+btnScale.addEventListener('click', () => {
+  scaleIdx = (scaleIdx + 1) % SCALES.length;
+  buildNotes();
+  btnScale.textContent = '音階 : ' + SCALES[scaleIdx].name;
+});
+
+btnDrone.addEventListener('click', () => {
+  initAudio();
+  if(actx.state === 'suspended') actx.resume();
+  const on = !btnDrone.classList.contains('on');
+  btnDrone.classList.toggle('on', on);
+  btnDrone.setAttribute('aria-pressed', String(on));
+  setDrone(on);
+  hideHint();
+});
+
+/* ═══════════ 描画ループ ═══════════ */
+function resize(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const w = Math.floor(canvas.clientWidth * dpr);
+  const h = Math.floor(canvas.clientHeight * dpr);
+  if(canvas.width !== w || canvas.height !== h){
+    canvas.width = w; canvas.height = h;
+    gl.viewport(0,0,w,h);
+  }
+}
+
+function frame(){
+  resize();
+
+  if(loopOn && actx){
+    const pos = loopPos(), cyc = loopCycle();
+    if(pos < prevPos){ fireRange(prevPos, LOOP_LEN, cyc-1); fireRange(0, pos, cyc); }
+    else fireRange(prevPos, pos, cyc);
+    prevPos = pos;
+    loopbar.style.width = (pos / LOOP_LEN * 100).toFixed(2) + '%';
+  }
+
+  gl.uniform2f(uRes, canvas.width, canvas.height);
+  gl.uniform1f(uTime, nowSec());
+  gl.uniform2fv(uImpPos, impPos);
+  gl.uniform1fv(uImpTime, impTime);
+  gl.uniform1fv(uImpHue, impHue);
+  gl.uniform1fv(uImpAmp, impAmp);
+  gl.uniform1i(uImpCount, impCount);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  requestAnimationFrame(frame);
+}
+
+buildNotes();
+requestAnimationFrame(frame);
+window.addEventListener('resize', resize);
+
+}
+</script>
+</body>
+</html>
