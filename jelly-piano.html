@@ -128,12 +128,11 @@ float sdRoundBox(vec3 p, vec3 b, float r){
   return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - r;
 }
 
-float rippleWave(vec2 dv, float travel, float t0, float freq){
+float rippleWave(vec2 p, vec2 ip, float travel, float t0, float freq){
   float seed = hash(vec2(t0*13.7, t0*7.3));
-  float ang = atan(dv.y, dv.x);
-  float wob = noise(vec2(cos(ang), sin(ang))*1.6 + seed*23.0);
-  float ph = (travel + (wob-0.5)*0.4) * freq * (0.88 + 0.24*seed);
-  return sin(ph) + 0.35*sin(ph*1.71 + 1.3);
+  float wob = noise(p*2.3 + seed*23.0);
+  float ph = (travel + (wob-0.5)*0.12) * freq * (0.94 + 0.12*seed);
+  return sin(ph) + 0.15*sin(ph*1.71 + 1.3);
 }
 
 float rippleBump(vec2 p, float t){
@@ -147,7 +146,7 @@ float rippleBump(vec2 p, float t){
     float travel = dt - d*1.7;
     float envelope = smoothstep(-0.17, -0.01, travel);
     float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
-    total += amp * envelope * rippleWave(p - ip, travel, uImpTime[i], 22.0);
+    total += amp * envelope * rippleWave(p, ip, travel, uImpTime[i], 16.0);
   }
   return total * 0.045;
 }
@@ -164,18 +163,18 @@ vec3 rippleColor(vec2 p, float t, out float mag){
     float travel = dt - d*1.7;
     float envelope = smoothstep(-0.17, -0.01, travel);
     float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
-    float w = abs(amp * envelope * rippleWave(p - ip, travel, uImpTime[i], 22.0));
+    float w = abs(amp * envelope * rippleWave(p, ip, travel, uImpTime[i], 16.0));
     colSum += hsv2rgb(vec3(uImpHue[i], 0.5, 1.0)) * w;
     wSum += w;
   }
-  mag = clamp(wSum*13.0, 0.0, 1.0);
+  mag = clamp(wSum*12.0, 0.0, 1.0);
   vec3 avgCol = colSum / max(wSum, 0.0001);
   return mix(vec3(1.0), avgCol, step(0.0001, wSum));
 }
 
 float panelSDF(vec3 p, float t){
   float d = sdRoundBox(p, vec3(0.86,1.18,0.032), 0.07);
-  float frost = fbm(p.xy*5.2 + vec2(0.0, t*0.045)) * 0.011;
+  float frost = fbm(p.xy*4.0 + vec2(0.0, t*0.045)) * 0.013;
   float ripple = rippleBump(p.xy, t);
   return d - frost - ripple;
 }
@@ -192,7 +191,7 @@ vec3 calcNormal(vec3 p, float t){
 vec3 background(vec3 rd){
   float t = uTime*0.045;
   vec2 uv = rd.xy*1.25 + rd.z*0.35;
-  float n1 = fbm(uv*2.9 + t);
+  float n1 = fbm(uv*2.2 + t);
   vec3 base = vec3(0.780,0.867,0.847);
   vec3 deep = vec3(0.690,0.784,0.760);
   vec3 col = mix(deep, base, smoothstep(0.15,0.85,n1));
@@ -264,7 +263,7 @@ void main(){
 
     float ripMag;
     vec3 ripCol = rippleColor(p.xy, t, ripMag);
-    base += ripCol * ripMag * 0.12;
+    base += ripCol * ripMag * 0.11;
 
     col = base;
   } else {
