@@ -141,11 +141,12 @@ float rippleBump(vec2 p, float t){
     if(i>=uImpCount) break;
     vec2 ip = uImpPos[i];
     float dt = t - uImpTime[i];
-    if(dt < 0.0 || dt > 2.6) continue;
+    if(dt < 0.0 || dt > 7.8) continue;
     float d = length(p - ip);
-    float travel = dt - d*1.7;
+    float st = dt * 0.3333;
+    float travel = st - d*1.7;
     float envelope = smoothstep(-0.17, -0.01, travel);
-    float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
+    float amp = exp(-st*2.6) * exp(-d*d*6.4) * uImpAmp[i];
     total += amp * envelope * rippleWave(p, ip, travel, uImpTime[i], 16.0);
   }
   return total * 0.045;
@@ -158,11 +159,12 @@ vec3 rippleColor(vec2 p, float t, out float mag){
     if(i>=uImpCount) break;
     vec2 ip = uImpPos[i];
     float dt = t - uImpTime[i];
-    if(dt < 0.0 || dt > 2.6) continue;
+    if(dt < 0.0 || dt > 7.8) continue;
     float d = length(p - ip);
-    float travel = dt - d*1.7;
+    float st = dt * 0.3333;
+    float travel = st - d*1.7;
     float envelope = smoothstep(-0.17, -0.01, travel);
-    float amp = exp(-dt*2.6) * exp(-d*d*6.4) * uImpAmp[i];
+    float amp = exp(-st*2.6) * exp(-d*d*6.4) * uImpAmp[i];
     float w = abs(amp * envelope * rippleWave(p, ip, travel, uImpTime[i], 16.0));
     colSum += hsv2rgb(vec3(uImpHue[i], 0.5, 1.0)) * w;
     wSum += w;
