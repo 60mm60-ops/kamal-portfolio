@@ -47,6 +47,8 @@
   .bob{transform-box:fill-box;animation:bob 9s ease-in-out infinite alternate}
   @keyframes bob{from{transform:translateY(-7px)}to{transform:translateY(7px)}}
   @media (prefers-reduced-motion: reduce){.bob{animation:none}}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.card,.card .shot img{transition:none}.card:hover{transform:none}.card:hover .shot img{transform:none}}
+  @media(max-width:640px){.card-top{flex-wrap:wrap}.card .kind{white-space:normal}}
   .flock{animation:drift 52s linear infinite}
   @keyframes drift{from{transform:translate(1500px,430px)}to{transform:translate(-300px,70px)}}
   .bob2{animation:bob2 3.6s ease-in-out infinite alternate}
@@ -416,7 +418,9 @@
 (() => {
   const hero = document.querySelector('.hero');
   const svg = document.getElementById('world');
-  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let REDUCED = motionMq.matches;
+  motionMq.addEventListener('change', (e) => { REDUCED = e.matches; });
   let visible = true;
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
 
@@ -526,6 +530,7 @@
   function nearest(p, maxD) {
     let best = null, bd = maxD;
     strands.forEach((s, si) => s.pts.forEach((q, qi) => {
+      if (qi === 0 || qi === s.pts.length - 1) return;
       const d = Math.hypot(q.x - p.x, q.y - p.y);
       if (d < bd) { bd = d; best = { s: si, i: qi }; }
     }));
@@ -533,16 +538,18 @@
   }
   hero.addEventListener('pointerdown', (e) => {
     if (REDUCED) return;
+    if (e.target.closest('a, button')) return;
     const p = toSVG(e); if (!p) return;
     const hit = nearest(p, 70);
     if (hit) {
-      drag = { s: hit.s, i: hit.i, x: p.x, y: p.y };
+      drag = { s: hit.s, i: hit.i, x: p.x, y: p.y, id: e.pointerId };
       svg.style.touchAction = 'none';
       try { hero.setPointerCapture(e.pointerId); } catch (_) {}
       svg.style.cursor = 'grabbing';
     }
   });
   hero.addEventListener('pointermove', (e) => {
+    if (drag && e.pointerId !== drag.id) return;
     const r = hero.getBoundingClientRect();
     tx = (e.clientX - r.left) / r.width - 0.5;
     ty = (e.clientY - r.top) / r.height - 0.5;
@@ -552,7 +559,7 @@
     if (drag) { drag.x = p.x; drag.y = p.y; }
     else svg.style.cursor = nearest(p, 70) ? 'grab' : '';
   });
-  const endDrag = () => { drag = null; svg.style.cursor = ''; svg.style.touchAction = ''; };
+  const endDrag = (e) => { if (drag && e && e.pointerId !== undefined && e.pointerId !== drag.id) return; drag = null; svg.style.cursor = ''; svg.style.touchAction = ''; };
   /* while a garland is being dragged, the page must not scroll with it (mobile) */
   hero.addEventListener('touchmove', (e) => { if (drag) e.preventDefault(); }, { passive: false });
   hero.addEventListener('pointerup', endDrag);
@@ -625,18 +632,28 @@
     }
   }
 
-  if (REDUCED) { renderGarlands(0); return; }
+  const STEP_MS = 1000 / 60;
+  let lastFrameMs = performance.now(), simMs = lastFrameMs, accMs = 0, garlandsParked = false;
   (function loop(now) {
     requestAnimationFrame(loop);
-    if (!visible) return;
+    if (!visible) { lastFrameMs = now; return; }
+    if (REDUCED) {
+      if (!garlandsParked) { garlandsParked = true; renderGarlands(0); }
+      lastFrameMs = now;
+      return;
+    }
+    garlandsParked = false;
+    const dtF = Math.min(now - lastFrameMs, 100); lastFrameMs = now;
+    const lerpK = 1 - Math.pow(1 - 0.04, dtF / STEP_MS);
     const drift = seen ? 0 : Math.sin(now * 0.00016) * 0.35;
-    cx += ((tx + drift) - cx) * 0.04;
-    cy += (ty - cy) * 0.04;
+    cx += ((tx + drift) - cx) * lerpK;
+    cy += (ty - cy) * lerpK;
     for (const g of layers) {
       const d = parseFloat(g.dataset.depth || 0);
       g.style.transform = 'translate(' + (-cx * d * 44).toFixed(2) + 'px,' + (-cy * d * 26).toFixed(2) + 'px)';
     }
-    stepGarlands(now);
+    accMs += dtF;
+    while (accMs >= STEP_MS) { stepGarlands(simMs); simMs += STEP_MS; accMs -= STEP_MS; }
     renderGarlands(now);
   })(performance.now());
 })();
