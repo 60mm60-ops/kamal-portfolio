@@ -142,6 +142,8 @@
 
   /* ---------- about ---------- */
   .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .motto{font-family:var(--disp);font-weight:600;font-size:clamp(20px,2.7vw,28px);line-height:1.42;color:var(--ink);border-left:4px solid var(--accent);padding:4px 0 4px 20px;margin:26px 0 30px;max-width:820px}
+  .motto .my{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:8px}
   @media(max-width:820px){.about-grid{grid-template-columns:1fr}}
   .about-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 28px}
   .about-card h3{font-family:var(--disp);font-size:19px;margin-bottom:10px}
@@ -373,6 +375,7 @@
     <div class="sec-head"><span class="sec-tag">ABOUT</span><h2>How I work</h2></div>
     <p class="sec-lead">My discipline is procedural design: decompose a process until reproducibility holds,
       then systematise it. The goal is always the same — tools that don&rsquo;t tire the people using them.</p>
+    <blockquote class="motto"><span class="my">MY MOTTO</span>Build tools that feel good to use. Beautiful colour, controls you never have to think about, motion that feels right &mdash; and above all, tools that don&rsquo;t tire the people using them.</blockquote>
     <div class="about-grid">
       <div class="about-card">
         <h3>The system is the tool</h3>
