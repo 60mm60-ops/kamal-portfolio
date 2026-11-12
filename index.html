@@ -537,6 +537,7 @@
     const hit = nearest(p, 70);
     if (hit) {
       drag = { s: hit.s, i: hit.i, x: p.x, y: p.y };
+      svg.style.touchAction = 'none';
       try { hero.setPointerCapture(e.pointerId); } catch (_) {}
       svg.style.cursor = 'grabbing';
     }
@@ -551,7 +552,9 @@
     if (drag) { drag.x = p.x; drag.y = p.y; }
     else svg.style.cursor = nearest(p, 70) ? 'grab' : '';
   });
-  const endDrag = () => { drag = null; svg.style.cursor = ''; };
+  const endDrag = () => { drag = null; svg.style.cursor = ''; svg.style.touchAction = ''; };
+  /* while a garland is being dragged, the page must not scroll with it (mobile) */
+  hero.addEventListener('touchmove', (e) => { if (drag) e.preventDefault(); }, { passive: false });
   hero.addEventListener('pointerup', endDrag);
   hero.addEventListener('pointercancel', endDrag);
   hero.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
