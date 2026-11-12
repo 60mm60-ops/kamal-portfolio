@@ -50,7 +50,7 @@
 <body>
 <canvas id="c"></canvas>
 <div class="cap">GLASS CARD — <b>タップ / ドラッグ</b>してぷるぷる確認</div>
-<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="50" aria-label="天気（晴から雨へ）"><span>雨</span></div>
+<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="65" aria-label="天気（晴から雨へ）"><span>雨</span></div>
 
 <div class="poem" id="poem">
   <p class="poem-label">宮沢賢治『春と修羅』序</p>
@@ -83,7 +83,7 @@ if(!gl){
   document.body.innerHTML = '<div class="warn">このブラウザは WebGL2 に対応していません。</div>';
 } else {
 
-const MAX_IMP = 28;
+const MAX_IMP = 36;
 
 const vsSrc = `#version 300 es
 in vec2 aPos;
@@ -97,6 +97,8 @@ uniform float uTime;
 uniform vec2 uImpPos[${MAX_IMP}];
 uniform float uImpTime[${MAX_IMP}];
 uniform float uImpAmp[${MAX_IMP}];
+uniform float uImpFreq[${MAX_IMP}];
+uniform float uImpSpeed[${MAX_IMP}];
 uniform float uRain;
 uniform int uImpCount;
 
@@ -138,11 +140,11 @@ float rippleBump(vec2 p, float t){
     float dt = t - t0;
     if(dt < 0.0 || dt > 9.0) continue;
     float d = length(p - ip);
-    float st = dt * 0.3333;
+    float st = dt * 0.3333 * uImpSpeed[i];
     float travel = st - d*1.7;
     float envelope = smoothstep(-0.34, -0.02, travel);
     float amp = exp(-st*2.4) * exp(-d*d*1.8) * uImpAmp[i];
-    total += amp * envelope * rippleWave(p, ip, travel, t0, 10.0);
+    total += amp * envelope * rippleWave(p, ip, travel, t0, 10.0 * uImpFreq[i]);
   }
   return total * 0.1;
 }
@@ -160,11 +162,11 @@ vec3 rippleColor(vec2 p, float t, out float mag){
     float dt = t - t0;
     if(dt < 0.0 || dt > 9.0) continue;
     float d = length(p - ip);
-    float st = dt * 0.3333;
+    float st = dt * 0.3333 * uImpSpeed[i];
     float travel = st - d*1.7;
     float envelope = smoothstep(-0.34, -0.02, travel);
     float amp = exp(-st*2.4) * exp(-d*d*1.8) * uImpAmp[i];
-    float w = abs(amp * envelope * rippleWave(p, ip, travel, t0, 10.0));
+    float w = abs(amp * envelope * rippleWave(p, ip, travel, t0, 10.0 * uImpFreq[i]));
     float sp = hash(vec2(t0*13.7, t0*7.3));
     vec3 c = mix(pink, green, step(0.333, sp));
     c = mix(c, purple, step(0.667, sp));
@@ -315,20 +317,26 @@ const uImpPos = gl.getUniformLocation(prog, 'uImpPos');
 const uImpTime = gl.getUniformLocation(prog, 'uImpTime');
 const uImpCount = gl.getUniformLocation(prog, 'uImpCount');
 const uImpAmp = gl.getUniformLocation(prog, 'uImpAmp');
+const uImpFreq = gl.getUniformLocation(prog, 'uImpFreq');
+const uImpSpeed = gl.getUniformLocation(prog, 'uImpSpeed');
 const uRain = gl.getUniformLocation(prog, 'uRain');
 
 // ── impulse ring buffer: each touch/drag point seeds a decaying ripple ──
 const impPos = new Float32Array(MAX_IMP*2);
 const impTime = new Float32Array(MAX_IMP);
 const impAmp = new Float32Array(MAX_IMP);
+const impFreq = new Float32Array(MAX_IMP);
+const impSpeed = new Float32Array(MAX_IMP);
 let impWrite = 0, impCount = 0;
 let start = performance.now();
 function nowSec(){ return (performance.now()-start)*0.001; }
 
-function pushImpulse(x, y, amp){
+function pushImpulse(x, y, amp, freq, speed){
   impPos[impWrite*2] = x;
   impPos[impWrite*2+1] = y;
   impAmp[impWrite] = (amp === undefined ? 1.0 : amp);
+  impFreq[impWrite] = (freq === undefined ? 1.0 : freq);
+  impSpeed[impWrite] = (speed === undefined ? 1.0 : speed);
   impTime[impWrite] = nowSec();
   impWrite = (impWrite+1) % MAX_IMP;
   impCount = Math.min(impCount+1, MAX_IMP);
@@ -337,10 +345,12 @@ function pushImpulse(x, y, amp){
 // ── same touches, expressed in screen px, ripple the poem's characters ──
 const domImpPos = new Float32Array(MAX_IMP*2);
 const domImpTime = new Float32Array(MAX_IMP);
+const domImpKind = new Float32Array(MAX_IMP);
 let domImpWrite = 0, domImpCount = 0;
-function pushDomImpulse(x, y){
+function pushDomImpulse(x, y, kind){
   domImpPos[domImpWrite*2] = x;
   domImpPos[domImpWrite*2+1] = y;
+  domImpKind[domImpWrite] = (kind === undefined ? 0 : kind);
   domImpTime[domImpWrite] = nowSec();
   domImpWrite = (domImpWrite+1) % MAX_IMP;
   domImpCount = Math.min(domImpCount+1, MAX_IMP);
@@ -385,14 +395,17 @@ function animatePoem(){
     for(let i=0;i<domImpCount;i++){
       const t0 = domImpTime[i];
       const dt = t - t0;
-      if(dt < 0 || dt > 1.6) continue;
+      const rain = domImpKind[i] > 0.5;
+      if(dt < 0 || dt > (rain ? 0.9 : 1.6)) continue;
       const dx = c.x - domImpPos[i*2];
       const dy = c.y - domImpPos[i*2+1];
       const d = Math.sqrt(dx*dx + dy*dy);
-      const travel = dt - d/720;
+      const travel = dt - d/(rain ? 380 : 720);
       const envelope = smoothstep(-0.18, -0.01, travel);
-      const amp = Math.exp(-dt*3.2) * Math.exp(-(d*d)/(2*220*220));
-      disp += amp * envelope * Math.sin(travel*13.0);
+      const amp = rain
+        ? 0.55 * Math.exp(-dt*4.5) * Math.exp(-(d*d)/(2*130*130))
+        : Math.exp(-dt*3.2) * Math.exp(-(d*d)/(2*220*220));
+      disp += amp * envelope * Math.sin(travel*(rain ? 26.0 : 13.0));
     }
     disp = Math.max(-1, Math.min(1, disp));
     c.el.style.transform = `translateY(${(disp*9).toFixed(2)}px) rotate(${(disp*4).toFixed(2)}deg)`;
@@ -563,16 +576,16 @@ function resize(){
 
 // ── rain, ported from the mizutamari hub: raindrops are ripple sources;
 //    the slider changes only how often they fall (rate ∝ amount²) ──
-let rainAmt = 0.50, rainAcc = 0, lastFrameT = nowSec();
-const RAIN_RATE = 12; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
+let rainAmt = 0.65, rainAcc = 0, lastFrameT = nowSec();
+const RAIN_RATE = 22; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
 function spawnRainDrop(){
   const x = (Math.random()*2 - 1) * 0.80;
   const y = (Math.random()*2 - 1) * 1.10;
-  pushImpulse(x, y, 0.4 + Math.random()*0.35);
+  pushImpulse(x, y, 0.32 + Math.random()*0.25, 2.3, 2.2);
   const rect = canvas.getBoundingClientRect();
   const sx = rect.left + ((x/2)*canvas.height + 0.5*canvas.width) / (canvas.width/rect.width);
   const sy = rect.top + (0.5*canvas.height - (y/2)*canvas.height) / (canvas.height/rect.height);
-  pushDomImpulse(sx, sy);
+  pushDomImpulse(sx, sy, 1);
 }
 const rainSlider = document.getElementById('rain');
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) rainSlider.value = 0;
@@ -593,6 +606,8 @@ function frame(){
   gl.uniform2fv(uImpPos, impPos);
   gl.uniform1fv(uImpTime, impTime);
   gl.uniform1fv(uImpAmp, impAmp);
+  gl.uniform1fv(uImpFreq, impFreq);
+  gl.uniform1fv(uImpSpeed, impSpeed);
   gl.uniform1f(uRain, rainAmt);
   gl.uniform1i(uImpCount, impCount);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
