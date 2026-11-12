@@ -50,7 +50,7 @@
 <body>
 <canvas id="c"></canvas>
 <div class="cap">GLASS CARD — <b>タップ / ドラッグ</b>してぷるぷる確認</div>
-<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="65" aria-label="天気（晴から雨へ）"><span>雨</span></div>
+<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="0" aria-label="天気（晴から雨へ）"><span>雨</span></div>
 
 <div class="poem" id="poem">
   <p class="poem-label">宮沢賢治『春と修羅』序</p>
@@ -576,7 +576,7 @@ function resize(){
 
 // ── rain, ported from the mizutamari hub: raindrops are ripple sources;
 //    the slider changes only how often they fall (rate ∝ amount²) ──
-let rainAmt = 0.65, rainAcc = 0, lastFrameT = nowSec();
+let rainAmt = 0, rainAcc = 0, lastFrameT = nowSec();
 const RAIN_RATE = 22; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
 function spawnRainDrop(){
   const x = (Math.random()*2 - 1) * 0.80;
