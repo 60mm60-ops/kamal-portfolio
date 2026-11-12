@@ -102,11 +102,16 @@
   .badges span{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
     background:rgba(255,255,255,.75);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:#575064}
   .badges span.hot{border-color:rgba(232,73,127,.4);color:var(--accent);background:rgba(255,255,255,.9)}
-  .hero-hint{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;z-index:5;pointer-events:none;
-    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:#8A8296;background:rgba(255,255,255,.65);
+  .hero-hint{position:absolute;left:max(24px,calc((100vw - 1160px)/2 + 24px));bottom:18px;z-index:5;pointer-events:none;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:#FDF6EE;background:rgba(70,36,54,.88);
     padding:6px 14px;border-radius:999px;backdrop-filter:blur(4px);white-space:nowrap}
   @media(max-width:640px){
-    .hero-hint{font-size:10.5px;bottom:10px;white-space:normal;max-width:92vw;text-align:center;line-height:1.55}
+    .hero-hint{font-size:10.5px;bottom:10px;white-space:normal;max-width:92vw;text-align:left;line-height:1.55}
+@media (max-width:700px){
+  .eyebrow .loc{display:block;margin-top:3px}
+  .badges{display:grid;grid-template-columns:1fr 1fr;max-width:430px}
+  .badges span{text-align:center}
+}
     .hero-content{padding-top:10vh;padding-bottom:104px}
     .badges span{font-size:9.5px;padding:4px 9px}
     .hero-sub{font-size:15.5px}
@@ -276,13 +281,12 @@
   </svg>
   <div class="wrap">
     <div class="hero-content">
-      <span class="eyebrow">DESIGN ENGINEER / CREATIVE TECHNOLOGIST — NARA, JAPAN</span>
+      <span class="eyebrow">DESIGN ENGINEER / CREATIVE TECHNOLOGIST <span class="loc">— NARA, JAPAN</span></span>
       <h1>I build tools.<br>But my main field<br>is the <span class="hl">engines</span><br>under them.</h1>
       <p class="hero-sub">
         Sixteen years in design and print taught me how craft actually works — so now I write
         <b>rendering engines</b>: soft-body physics, raymarched glass, morphing, gradients.
-        Everything below runs live in your browser. And every engine here was
-        <b>built entirely on a smartphone</b>.
+        Everything below runs live in your browser.
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#tools">Touch the tools</a>
