@@ -490,6 +490,15 @@
     if (springTimer) return;
     lastT = performance.now();
     const step = (t) => {
+      if (REDUCED) {
+        springs.forEach((s, k) => {
+          const targets = typeof k === 'string' ? bldgs.filter(g => keyOf(g) === k) : [k];
+          targets.forEach(g => g.removeAttribute('transform'));
+        });
+        springs.clear();
+        springTimer = null;
+        return;
+      }
       const dt = Math.min(0.032, (t - lastT) / 1000); lastT = t;
       let alive = false;
       springs.forEach((s, k) => {
@@ -582,6 +591,7 @@
   }
   hero.addEventListener('pointerdown', (e) => {
     if (REDUCED) return;
+    if (drag) return;
     if (e.target.closest('a, button')) return;
     const p = toSVG(e); if (!p) return;
     const hit = nearest(p, 70);
@@ -717,15 +727,21 @@
   var f = document.querySelector('.contact-form');
   if (!f || !window.fetch) return;
   var q = function(n){ return f.querySelector('[name="' + n + '"]'); };
+  var sending = false;
   f.addEventListener('submit', function(e){
     e.preventDefault();
+    if (sending) return;
+    sending = true;
     var btn = f.querySelector('.send');
     btn.disabled = true;
+    var honey = q('_honey');
     var data = {
       name: q('name').value, email: q('email').value, message: q('message').value,
-      _subject: 'Inquiry from the KAMAL portfolio', _template: 'table', _captcha: 'false'
+      _subject: 'Inquiry from the KAMAL portfolio', _template: 'table', _captcha: 'false',
+      _honey: honey ? honey.value : ''
     };
-    // Optimistic: show the thank-you immediately; the request continues in the background.
+    // Optimistic: show the thank-you immediately; the request continues in the background
+    // and its JSON result is still verified -- a failure restores the form with an error note.
     f.hidden = true;
     var n = document.getElementById('sentNote');
     if (n) n.hidden = false;
@@ -733,22 +749,25 @@
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
       body: JSON.stringify(data)
-    }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .catch(function(){
-        // Only matters if the visitor is still on the page: bring the form back with an error note.
-        if (n) n.hidden = true;
-        f.hidden = false;
-        btn.disabled = false; btn.textContent = 'Send';
-        var err = document.getElementById('sendError');
-        if (!err) {
-          err = document.createElement('p');
-          err.id = 'sendError';
-          err.style.cssText = 'color:#FFB3CB;font-size:14px;margin-top:10px';
-          err.textContent = 'Sending failed — please try once more.';
-          f.appendChild(err);
-        }
-      });
-  });
+    }).then(function(r){
+      return r.json().then(function(j){ return { ok: r.ok, j: j }; });
+    }).then(function(res){
+      var ok = res.ok && res.j && (res.j.success === true || res.j.success === 'true');
+      if (!ok) throw new Error('submit failed');
+    }).catch(function(){
+      sending = false;
+      if (n) n.hidden = true;
+      f.hidden = false;
+      btn.disabled = false;
+      var err = document.getElementById('sendError');
+      if (!err) {
+        err = document.createElement('p');
+        err.id = 'sendError';
+        err.style.cssText = 'color:#FFB3CB;font-size:14px;margin-top:10px';
+        err.textContent = 'Sending failed — please try once more.';
+        f.appendChild(err);
+      }
+    });
   });
 })();
 </script>
