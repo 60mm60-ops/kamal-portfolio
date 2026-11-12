@@ -50,7 +50,7 @@
 <body>
 <canvas id="c"></canvas>
 <div class="cap">GLASS CARD — <b>タップ / ドラッグ</b>してぷるぷる確認</div>
-<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="30" aria-label="天気（晴から雨へ）"><span>雨</span></div>
+<div class="rain-ui"><span>晴</span><input type="range" id="rain" min="0" max="100" value="50" aria-label="天気（晴から雨へ）"><span>雨</span></div>
 
 <div class="poem" id="poem">
   <p class="poem-label">宮沢賢治『春と修羅』序</p>
@@ -415,9 +415,118 @@ function toLocal(clientX, clientY){
 }
 function norm3(x,y,z){ const l=Math.sqrt(x*x+y*y+z*z); return [x/l,y/l,z/l]; }
 
+
+// ── piano voice, ported from jelly piano: tap anywhere = a note (up = high) ──
+let actx=null, master=null, revIn=null, dryBus=null, wetSend=null;
+function makeIR(sec, decay){
+  const rate = actx.sampleRate, len = Math.floor(rate*sec);
+  const b = actx.createBuffer(2, len, rate);
+  for(let ch=0; ch<2; ch++){
+    const d = b.getChannelData(ch);
+    for(let i=0;i<len;i++){
+      const e = Math.pow(1 - i/len, decay);
+      d[i] = (Math.random()*2-1) * e * (i < rate*0.012 ? i/(rate*0.012) : 1);
+    }
+  }
+  return b;
+}
+function initAudio(){
+  if(actx) return;
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  master = actx.createGain(); master.gain.value = 0.85;
+  const comp = actx.createDynamicsCompressor();
+  comp.threshold.value = -16; comp.knee.value = 26; comp.ratio.value = 3.2;
+  comp.attack.value = 0.012; comp.release.value = 0.35;
+  master.connect(comp); comp.connect(actx.destination);
+  const conv = actx.createConvolver();
+  conv.buffer = makeIR(4.6, 2.4);
+  const wetGain = actx.createGain(); wetGain.gain.value = 0.62;
+  const revTone = actx.createBiquadFilter();
+  revTone.type = 'lowpass'; revTone.frequency.value = 3400;
+  conv.connect(revTone); revTone.connect(wetGain); wetGain.connect(master);
+  const dly = actx.createDelay(2.5); dly.delayTime.value = 0.46;
+  const fb = actx.createGain(); fb.gain.value = 0.36;
+  const dTone = actx.createBiquadFilter();
+  dTone.type = 'lowpass'; dTone.frequency.value = 1900;
+  dly.connect(dTone); dTone.connect(fb); fb.connect(dly);
+  dly.connect(conv);
+  revIn = actx.createGain(); revIn.gain.value = 1;
+  revIn.connect(conv); revIn.connect(dly);
+  dryBus = actx.createGain(); dryBus.gain.value = 0.72;
+  dryBus.connect(master);
+  wetSend = actx.createGain(); wetSend.gain.value = 0.85;
+  wetSend.connect(revIn);
+}
+const SCALE_DEG = [0,2,5,7,9]; // 陽 (yo pentatonic), root D — same as jelly piano's default
+const NOTES = [];
+for(let oct=-2; oct<=2; oct++) for(const d of SCALE_DEG){
+  const m = 62 + 12*oct + d;
+  if(m >= 40 && m <= 96) NOTES.push(m);
+}
+NOTES.sort((a,b)=>a-b);
+function midiToFreq(m){ return 440 * Math.pow(2, (m-69)/12); }
+function playNote(midi, vel, panVal){
+  if(!actx) return;
+  const t0 = actx.currentTime;
+  const f = midiToFreq(midi);
+  const dur = Math.min(9, Math.max(1.9, 8.2 * Math.pow(261.6/f, 0.42)));
+  const out = actx.createGain();
+  out.gain.value = vel * 0.34;
+  const lp = actx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.setValueAtTime(Math.min(9000, f*9 + 1800*vel), t0);
+  lp.frequency.exponentialRampToValueAtTime(Math.max(420, f*2.2), t0 + dur*0.6);
+  lp.Q.value = 0.4;
+  const pan = actx.createStereoPanner ? actx.createStereoPanner() : null;
+  if(pan) pan.pan.value = panVal;
+  out.connect(lp);
+  if(pan){ lp.connect(pan); pan.connect(dryBus); pan.connect(wetSend); }
+  else   { lp.connect(dryBus); lp.connect(wetSend); }
+  const ratios = [1, 2.001, 3.004, 4.010, 5.02, 6.05, 8.09];
+  const amps   = [1, 0.44,  0.25,  0.13,  0.075, 0.04, 0.018];
+  const oscs = [];
+  for(let i=0;i<ratios.length;i++){
+    const hf = f * ratios[i];
+    if(hf > 15000) continue;
+    const o = actx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = hf;
+    o.detune.value = (Math.random()-0.5) * 3.5;
+    const g = actx.createGain();
+    const peak = amps[i] * (0.55 + 0.45*vel);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(peak, t0 + 0.006 + i*0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur/(1 + i*0.42));
+    o.connect(g); g.connect(out);
+    o.start(t0); o.stop(t0 + dur + 0.2);
+    oscs.push(o);
+  }
+  const nb = actx.createBuffer(1, Math.floor(actx.sampleRate*0.06), actx.sampleRate);
+  const nd = nb.getChannelData(0);
+  for(let i=0;i<nd.length;i++) nd[i] = (Math.random()*2-1) * Math.pow(1 - i/nd.length, 3);
+  const ns = actx.createBufferSource(); ns.buffer = nb;
+  const nf = actx.createBiquadFilter();
+  nf.type = 'bandpass'; nf.frequency.value = Math.min(6000, f*3.2); nf.Q.value = 0.9;
+  const ng = actx.createGain(); ng.gain.value = 0.035 * vel;
+  ns.connect(nf); nf.connect(ng); ng.connect(out);
+  ns.start(t0); ns.stop(t0 + 0.08);
+  if(oscs.length){
+    oscs[0].onended = () => { try{ out.disconnect(); lp.disconnect(); if(pan) pan.disconnect(); }catch(e){} };
+  }
+}
+function noteFor(clientX, clientY, vel){
+  initAudio();
+  if(actx.state === 'suspended') actx.resume();
+  const yn = Math.min(1, Math.max(0, clientY / window.innerHeight));
+  const idx = Math.min(NOTES.length-1, Math.floor((1-yn) * NOTES.length));
+  const xn = Math.min(1, Math.max(0, clientX / window.innerWidth));
+  playNote(NOTES[idx], vel, (xn - 0.5) * 1.1);
+}
+let lastNoteT = 0;
 let dragging = false, lastX=0, lastY=0;
 function onDown(e){
   dragging = true;
+  noteFor(e.clientX, e.clientY, 0.62);
   const [x,y] = toLocal(e.clientX, e.clientY);
   pushImpulse(x,y);
   pushDomImpulse(e.clientX, e.clientY);
@@ -431,6 +540,8 @@ function onMove(e){
     pushImpulse(x,y);
     pushDomImpulse(e.clientX, e.clientY);
     lastX=x; lastY=y;
+    const nowP = performance.now();
+    if(nowP - lastNoteT > 160){ lastNoteT = nowP; noteFor(e.clientX, e.clientY, 0.34); }
   }
 }
 function onUp(){ dragging = false; }
@@ -452,12 +563,12 @@ function resize(){
 
 // ── rain, ported from the mizutamari hub: raindrops are ripple sources;
 //    the slider changes only how often they fall (rate ∝ amount²) ──
-let rainAmt = 0.30, rainAcc = 0, lastFrameT = nowSec();
-const RAIN_RATE = 2.4; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
+let rainAmt = 0.50, rainAcc = 0, lastFrameT = nowSec();
+const RAIN_RATE = 12; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
 function spawnRainDrop(){
   const x = (Math.random()*2 - 1) * 0.80;
   const y = (Math.random()*2 - 1) * 1.10;
-  pushImpulse(x, y, 0.35 + Math.random()*0.3);
+  pushImpulse(x, y, 0.4 + Math.random()*0.35);
   const rect = canvas.getBoundingClientRect();
   const sx = rect.left + ((x/2)*canvas.height + 0.5*canvas.width) / (canvas.width/rect.width);
   const sy = rect.top + (0.5*canvas.height - (y/2)*canvas.height) / (canvas.height/rect.height);
