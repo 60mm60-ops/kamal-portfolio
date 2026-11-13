@@ -77,6 +77,8 @@
 </div>
 
 <script>
+const EMBED_Q = new URLSearchParams(location.search).has('embed');
+const MARCH = EMBED_Q ? 44 : 70;
 const canvas = document.getElementById('c');
 const gl = canvas.getContext('webgl2', {antialias:false, alpha:false});
 
@@ -246,7 +248,7 @@ void main(){
   vec3 p = ro;
   bool hit = false;
 
-  for(int i=0;i<70;i++){
+  for(int i=0;i<${MARCH};i++){
     p = ro + rd*dist;
     float d = panelSDF(p,t);
     if(d < 0.0015){ hit = true; break; }
@@ -566,7 +568,7 @@ canvas.addEventListener('pointerup', onUp);
 canvas.addEventListener('pointercancel', onUp);
 
 function resize(){
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const dpr = Math.min(window.devicePixelRatio || 1, EMBED ? 1.0 : 1.5);
   const w = Math.floor(canvas.clientWidth * dpr);
   const h = Math.floor(canvas.clientHeight * dpr);
   if(canvas.width !== w || canvas.height !== h){
@@ -578,6 +580,7 @@ function resize(){
 // ── rain, ported from the mizutamari hub: raindrops are ripple sources;
 //    the slider changes only how often they fall (rate ∝ amount²) ──
 let rainAmt = 0, rainAcc = 0, lastFrameT = nowSec();
+let lastDrawT = 0;
 const RAIN_RATE = 22; // drops/sec at slider max — the hub used 40 on its height-field; one ring here costs more
 function spawnRainDrop(){
   const x = (Math.random()*2 - 1) * 0.80;
@@ -612,6 +615,10 @@ function frame(){
   if (rainAmt > 0){
     rainAcc += rainAmt*rainAmt*RAIN_RATE*dtF;
     while (rainAcc >= 1){ rainAcc -= 1; spawnRainDrop(); }
+  }
+  if (EMBED){
+    if (tNow - lastDrawT < 1/30){ requestAnimationFrame(frame); return; }
+    lastDrawT = tNow;
   }
   gl.uniform2f(uRes, canvas.width, canvas.height);
   gl.uniform1f(uTime, tNow);
