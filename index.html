@@ -165,7 +165,7 @@
   .live-shot img{position:absolute;inset:0}
   .live-frame{position:absolute;top:0;left:0;border:0;pointer-events:none;opacity:0;transition:opacity .6s ease;transform-origin:0 0}
   .live-frame.on{opacity:1}
-  .live-badge{position:absolute;top:12px;left:12px;z-index:3;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:#FFF7ED;background:rgba(64,46,53,.85);padding:5px 10px;border-radius:999px;opacity:0;transition:opacity .6s ease;pointer-events:none}
+  .live-badge{position:absolute;top:12px;left:12px;z-index:3;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:#FFF7ED;background:rgba(64,46,53,.85);padding:5px 10px;border-radius:999px;opacity:1;transition:opacity .6s ease;pointer-events:none}
   .live-shot .live-frame.on ~ .live-badge{opacity:1}
   @media(max-width:820px){.card.featured .shot{aspect-ratio:16/10}}
 
@@ -379,7 +379,7 @@
       </div>
 
       <article class="card featured">
-        <a class="shot live-shot" href="glass-jelly-card.html"><img src="img/jellycard.jpg" alt="Glass Jelly Card — frosted glass that ripples under touch" width="1120" height="752" loading="lazy" decoding="async"><iframe class="live-frame" data-src="glass-jelly-card.html?embed=1" title="Glass Jelly Card — live miniature" aria-hidden="true" tabindex="-1" scrolling="no"></iframe><span class="live-badge">&#9679; LIVE &middot; THE REAL APP</span></a>
+        <a class="shot live-shot" href="glass-jelly-card.html"><img src="img/jellycard.jpg" alt="Glass Jelly Card — frosted glass that ripples under touch" width="1120" height="752" loading="lazy" decoding="async"><iframe class="live-frame" data-src="glass-jelly-card.html?embed=1" title="Glass Jelly Card — live miniature" aria-hidden="true" tabindex="-1" scrolling="no"></iframe><span class="live-badge">&#9654; TAP TO PLAY</span></a>
         <div class="card-body">
           <div class="card-top"><h3>Glass Jelly Card</h3><span class="kind">WEBGL2 / RAYMARCHING</span></div>
           <p class="punch">Can a screen feel soft?</p>
@@ -439,17 +439,7 @@
           <div class="card-links"><a href="https://emojichat.vercel.app">Open the tool &rarr;</a></div>
         </div>
       </article>
-      <article class="card">
-        <a class="shot" href="https://cooking-ivory.vercel.app"><img src="img/cooking.jpg" alt="Recipe Step Timer — a timer that follows the steps of a recipe" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>Recipe Step Timer</h3><span class="kind">KITCHEN / STEP TIMER</span></div>
-          <p class="punch">A sous-chef for your timeline.</p>
-          <p class="desc">A step-by-step timer for recipes. It carries "what comes next" and "how long is left" at the same time, so nothing burns while your hands are busy.</p>
-          <p class="engine"><b>ENGINE:</b> parallel step scheduling &middot; glanceable progress rings</p>
-          <div class="card-links"><a href="https://cooking-ivory.vercel.app">Open the tool &rarr;</a></div>
-        </div>
-      </article>
-
+      
       
       
       
@@ -892,9 +882,9 @@
   var shot = document.querySelector('.live-shot');
   if (!shot) return;
   var frame = shot.querySelector('iframe.live-frame');
+  var badge = shot.querySelector('.live-badge');
   if (!frame) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var VW = 1320, loaded = false, resizeTimer = null;
+  var VW = 1320, playing = false, resizeTimer = null;
   function fit(){
     var r = shot.getBoundingClientRect();
     if (!r.width) return;
@@ -906,16 +896,27 @@
   fit();
   window.addEventListener('resize', function(){ clearTimeout(resizeTimer); resizeTimer = setTimeout(fit, 150); });
   function post(msg){ try { frame.contentWindow.postMessage(msg, '*'); } catch (e) {} }
+  function start(){
+    playing = true;
+    fit();
+    frame.addEventListener('load', function(){ setTimeout(function(){ if (playing) frame.classList.add('on'); }, 350); });
+    frame.src = frame.getAttribute('data-src');
+    if (badge) badge.innerHTML = '&#9679; LIVE &middot; TAP TO STOP';
+  }
+  function stop(){
+    playing = false;
+    frame.classList.remove('on');
+    frame.removeAttribute('src');
+    if (badge) badge.innerHTML = '&#9654; TAP TO PLAY';
+  }
+  shot.addEventListener('click', function(e){
+    e.preventDefault();
+    if (playing) stop(); else start();
+  });
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(en){
-      if (en.isIntersecting) {
-        if (!loaded) {
-          loaded = true;
-          fit();
-          frame.addEventListener('load', function(){ setTimeout(function(){ frame.classList.add('on'); }, 800); });
-          frame.src = frame.getAttribute('data-src');
-        } else { post('jelly-resume'); }
-      } else if (loaded) { post('jelly-pause'); }
+      if (!playing) return;
+      if (en.isIntersecting) post('jelly-resume'); else post('jelly-pause');
     });
   }, { rootMargin: '200px' });
   io.observe(shot);
