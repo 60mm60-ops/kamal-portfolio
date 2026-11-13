@@ -428,23 +428,35 @@
     if(e.pointerType === 'mouse' || petting){ var p = toSVG(e); if(p) strokeTrees(p); }
   });
 
-  /* --- the deer of Nara --- */
+  /* --- the deer of Nara: smooth silhouettes, real stepping legs --- */
+  var COL = '#C68B4E', DARK = '#A96F38', FAR = '#B57E42';
+  var SPOTS = '<circle cx="-5" cy="-25.5" r="1.7" fill="#FFF3E0" opacity="0.8"/><circle cx="3" cy="-23.5" r="1.4" fill="#FFF3E0" opacity="0.8"/><circle cx="-13" cy="-24" r="1.3" fill="#FFF3E0" opacity="0.75"/><circle cx="-9" cy="-28" r="1.1" fill="#FFF3E0" opacity="0.7"/>';
+  var TAIL = '<path d="M-28.5,-28 C-31.5,-25 -32,-20.5 -30,-16.5 C-27.8,-19.5 -27.6,-24 -28.5,-28 Z" fill="' + COL + '"/>';
+  var REAR = ' C-26,-33 -29,-30 -29.5,-25 C-29.9,-20.5 -28.6,-17.2 -24.8,-16.3 C-16,-15.2 -6,-15.4 2,-15.8 C7,-16 11.5,-16.6 14.5,-17.8';
+  var POSES = [
+    { body: 'M32.5,-36.5 C30.5,-40.5 28,-43 24.5,-44.2 C21.5,-45.2 18.5,-44.6 16.5,-43 C13.5,-38.5 11,-35.2 6,-33.5 C-2,-31.5 -12,-31.5 -20,-32.5' + REAR + ' C16.2,-18.6 17.6,-20 18.6,-22 C20.8,-25.8 22.2,-29.8 23.6,-33 C24.8,-34.6 27,-35.8 32.5,-36.5 Z',
+      ear: '<path d="M20.5,-44 C19.5,-47.5 19.5,-50.2 21.2,-52 C22.6,-49.2 22.4,-46.3 21.4,-44 Z" fill="' + DARK + '"/><path d="M17.5,-43.5 C13.8,-45.2 10.8,-48.2 11.2,-51.6 C14.6,-51.2 17.4,-47.6 18.2,-44.6 Z" fill="' + COL + '"/>',
+      ant: '<path d="M18,-44.5 C14.5,-50.5 8.5,-55 -0.5,-56.5 M9,-52 C7,-55 4,-56.8 0.5,-57.2 M14,-48 C12,-51.5 9,-53.5 5.5,-54" stroke="#8A5A2B" stroke-width="2" fill="none" stroke-linecap="round"/>',
+      eye: '<circle cx="25.5" cy="-39.8" r="1.25" fill="#26221E"/>' },
+    { body: 'M35,-18.8 C33,-22.3 30,-24.8 26,-25.9 C21,-27.6 15,-29.4 7.5,-30.9 C0,-32.2 -11,-32.6 -20,-32.5' + REAR + ' C16.5,-18.8 17.8,-19.8 18.2,-21.4 C20,-22.8 22.5,-23.4 25,-23.1 C27.5,-22.7 31,-20.6 35,-18.8 Z',
+      ear: '<path d="M24.5,-26.8 C21.5,-28.2 19.2,-30.6 19.6,-33.6 C22.4,-32.6 24.4,-30 25,-27.6 Z" fill="' + COL + '"/>',
+      ant: '<path d="M23.5,-27 C18,-31.5 11,-34 4,-34.2 M14.5,-32 C12.5,-34.2 9.5,-35.2 6.5,-35" stroke="#8A5A2B" stroke-width="2" fill="none" stroke-linecap="round"/>',
+      eye: '<circle cx="28.5" cy="-22.2" r="1.2" fill="#26221E"/>' },
+  ];
+  var LEG_FRONT = 'M-1.6,0 C-1.9,7 -1.7,14 -1.4,22.5 L1.2,22.5 C1.3,15 1.6,7 1.7,0 Z';
+  var LEG_REAR = 'M-1.9,0 C-2.3,5 -1.6,9 -2.1,13 C-2.5,16.5 -2.3,19.5 -2.1,22.5 L0.7,22.5 C0.5,18 0.9,13.5 1.5,8 C2,3.5 2.1,1.5 1.9,0 Z';
+  function leg(x, y, d, fill, off){
+    return '<g transform="translate(' + x + ',' + y + ')"><g class="legrot" data-off="' + off + '"><path d="' + d + '" fill="' + fill + '"/></g></g>';
+  }
   function deerSVG(antlers){
-    var COL = '#C68B4E', DARK = '#A96F38';
-    var spots = '<circle cx="-5" cy="-25.5" r="1.7" fill="#FFF3E0" opacity="0.8"/><circle cx="3" cy="-23.5" r="1.4" fill="#FFF3E0" opacity="0.8"/><circle cx="-13" cy="-24" r="1.3" fill="#FFF3E0" opacity="0.75"/><circle cx="-9" cy="-28" r="1.1" fill="#FFF3E0" opacity="0.7"/>';
-    var tail = '<path d="M-28.5,-28 C-31.5,-25 -32,-20.5 -30,-16.5 C-27.8,-19.5 -27.6,-24 -28.5,-28 Z" fill="' + COL + '"/>';
-    var legsRear = ' C-26,-33 -29,-30 -29.5,-25 C-30,-20 -28.5,-16 -27.6,-11 C-27.2,-6 -26.9,-3 -26.6,0 L-23.8,0 C-23.4,-4 -22.8,-8 -21.2,-12 C-18.5,-15 -16,-16.5 -12,-16.8 C-4,-17.5 4,-17.5 9,-16.5 C10.8,-12 11.3,-7 11.7,-3 C11.9,-1.5 12,-0.5 12.2,0 L14.8,0 C15,-3 15.2,-8 15.4,-13';
-    var standBody = 'M32.5,-36.5 C30.5,-40.5 28,-43 24.5,-44.2 C21.5,-45.2 18.5,-44.6 16.5,-43 C13.5,-38.5 11,-35.2 6,-33.5 C-2,-31.5 -12,-31.5 -20,-32.5' + legsRear + ' C15.6,-16 16.8,-19 18.6,-22 C20.8,-25.8 22.2,-29.8 23.6,-33 C24.8,-34.6 27,-35.8 32.5,-36.5 Z';
-    var standEar = '<path d="M20.5,-44 C19.5,-47.5 19.5,-50.2 21.2,-52 C22.6,-49.2 22.4,-46.3 21.4,-44 Z" fill="' + DARK + '"/><path d="M17.5,-43.5 C13.8,-45.2 10.8,-48.2 11.2,-51.6 C14.6,-51.2 17.4,-47.6 18.2,-44.6 Z" fill="' + COL + '"/>';
-    var standAnt = antlers ? '<path d="M18,-44.5 C14.5,-50.5 8.5,-55 -0.5,-56.5 M9,-52 C7,-55 4,-56.8 0.5,-57.2 M14,-48 C12,-51.5 9,-53.5 5.5,-54" stroke="#8A5A2B" stroke-width="2" fill="none" stroke-linecap="round"/>' : '';
-    var stand = '<path d="' + standBody + '" fill="' + COL + '"/>' + tail + spots + standEar + standAnt + '<circle cx="25" cy="-39.8" r="1.25" fill="#26221E"/>';
-    var grazeBody = 'M30,-3.5 C27,-5 24,-6.5 21,-8.5 C17,-11 13,-20 8,-27 C0,-30.5 -12,-31.5 -20,-32.5' + legsRear + ' C15.9,-15.5 16.8,-18.5 18.5,-21 C21,-15 23.5,-9.5 25.8,-6.8 C27,-5.5 28.5,-4.3 30,-3.5 Z';
-    var grazeEar = '<path d="M20.5,-9.5 C17,-11 14,-13.5 14.5,-16.5 C17.5,-15.5 20,-12.5 20.8,-10 Z" fill="' + COL + '"/>';
-    var grazeAnt = antlers ? '<path d="M20,-9.5 C13,-13 6,-14 -1,-12.5 M11,-13 C9,-15.5 6,-16.5 3,-16.3" stroke="#8A5A2B" stroke-width="2" fill="none" stroke-linecap="round"/>' : '';
-    var graze = '<path d="' + grazeBody + '" fill="' + COL + '"/>' + tail + spots + grazeEar + grazeAnt + '<circle cx="24.5" cy="-6.8" r="1.2" fill="#26221E"/>';
-    return '<ellipse cx="0" cy="1.5" rx="17" ry="3" fill="#04302B" opacity="0.20"/>'
-      + '<g class="pose-graze" style="display:none">' + graze + '</g>'
-      + '<g class="pose-stand">' + stand + '</g>';
+    var s = '<ellipse cx="0" cy="1.5" rx="17" ry="3" fill="#04302B" opacity="0.20"/>';
+    s += leg(11.6, -23, LEG_FRONT, FAR, Math.PI) + leg(-25.4, -23, LEG_REAR, FAR, 0);
+    s += leg(13.4, -23, LEG_FRONT, COL, 0) + leg(-23.4, -23, LEG_REAR, COL, Math.PI);
+    for(var i=0;i<3;i++){
+      var pz = POSES[i];
+      s += '<g class="pose" data-i="' + i + '"' + (i ? ' style="display:none"' : '') + '><path d="' + pz.body + '" fill="' + COL + '"/>' + TAIL + SPOTS + pz.ear + (antlers ? pz.ant : '') + pz.eye + '</g>';
+    }
+    return s;
   }
   function makeDeer(x, y, antlers, s){
     var g = document.createElementNS(NS,'g');
@@ -452,19 +464,19 @@
     g.innerHTML = deerSVG(antlers);
     svg.appendChild(g);
     var d = { el:g, x:x, y:y, tx:x, ty:y, s:s, mode:'idle', wait: 800 + Math.random()*2200,
-              speed: 0.55, flip: 1, hop: 0, bob: Math.random()*6 };
+              flip: 1, phase: Math.random()*3, amp: 0, pose: 0, poseTimer: 0, antlers: antlers,
+              legs: Array.prototype.slice.call(g.querySelectorAll('.legrot')),
+              poses: Array.prototype.slice.call(g.querySelectorAll('.pose')) };
     g.addEventListener('pointerdown', function(e){ e.stopPropagation(); startle(d, e); });
-    place(d, 0);
+    place(d);
     return d;
   }
-  function place(d, dt){
+  function place(d){
     var scr = P(d.x, d.y, H(d.x, d.y));
-    var bobY = (d.mode === 'walk' || d.mode === 'flee') ? Math.abs(Math.sin(d.bob))*2.4 : 0;
-    if(d.hop > 0) d.hop = Math.max(0, d.hop - dt*3.2);
-    var hopY = Math.sin(Math.min(1, d.hop)) * 10;
-    d.el.setAttribute('transform', 'translate(' + scr[0].toFixed(1) + ',' + (scr[1] - bobY - hopY).toFixed(1) + ') scale(' + (d.flip*d.s).toFixed(2) + ',' + d.s.toFixed(2) + ')');
+    var moving = d.mode === 'walk' || d.mode === 'flee';
+    var bobY = moving ? Math.abs(Math.sin(d.phase)) * 1.1 * Math.min(1, d.amp/10 + 0.3) : 0;
+    d.el.setAttribute('transform', 'translate(' + scr[0].toFixed(1) + ',' + (scr[1] - bobY).toFixed(1) + ') scale(' + (d.flip*d.s).toFixed(2) + ',' + d.s.toFixed(2) + ')');
     d.el.setAttribute('data-d', (d.x + d.y).toFixed(2));
-    // keep painter order among trees
     var sib = d.el.nextElementSibling;
     while(sib && sib !== fx){
       if(sib.getAttribute && sib.getAttribute('data-d') !== null && +sib.getAttribute('data-d') >= d.x + d.y) break;
@@ -490,7 +502,7 @@
       var y = Math.min(N-0.9, Math.max(0.9, away[1] + (Math.random()-0.5)*2.4));
       if(walkable(x,y)){ d.tx = x; d.ty = y; break; }
     }
-    d.mode = 'flee'; d.hop = 1;
+    d.mode = 'flee';
     var bang = document.createElementNS(NS,'text');
     var scr2 = P(d.x, d.y, H(d.x, d.y));
     bang.setAttribute('x', scr2[0]); bang.setAttribute('y', scr2[1]-58);
@@ -502,35 +514,56 @@
       bang.setAttribute('y', scr2[1]-58-life*14);
       if(life < 1) requestAnimationFrame(anim); else bang.remove(); })();
   }
-  var deer = [ makeDeer(4.2, 10.3, false, 1.02), makeDeer(7.9, 11.3, true, 1.12), makeDeer(11.2, 8.8, false, 0.9) ];
-  if(reduce){ deer.forEach(function(d){ place(d, 0); }); return; }
+  var deer = [ makeDeer(4.2, 10.3, false, 0.66), makeDeer(7.9, 11.3, true, 0.72), makeDeer(11.2, 8.8, false, 0.58) ];
+  if(reduce){ deer.forEach(function(d){ place(d); }); return; }
   var last = performance.now();
   function tick(now){
     var dt = Math.min(0.05, (now - last)/1000); last = now;
     deer.forEach(function(d){
-      d.bob += dt * (d.mode === 'flee' ? 15 : 9);
+      var moving = d.mode === 'walk' || d.mode === 'flee';
       if(d.mode === 'idle' || d.mode === 'graze'){
         d.wait -= dt*1000;
-        var ps = d.el.querySelector('.pose-stand'), pg = d.el.querySelector('.pose-graze');
-        if(ps && pg){ var gr = d.mode === 'graze'; ps.style.display = gr ? 'none' : ''; pg.style.display = gr ? '' : 'none'; }
         if(d.wait <= 0){
-          if(Math.random() < 0.4){ d.mode = 'graze'; d.wait = 1400 + Math.random()*2200; }
-          else { pickTarget(d); d.mode = 'walk'; }
+          if(Math.random() < 0.4){ d.mode = 'graze'; d.wait = 1600 + Math.random()*2400; }
+          else if(Math.random() < 0.75){ pickTarget(d); d.mode = 'walk'; }
+          else d.wait = 900 + Math.random()*1600;
         }
       } else {
         var dx = d.tx - d.x, dy = d.ty - d.y, dist = Math.hypot(dx, dy);
-        var sp = d.mode === 'flee' ? 3.1 : 0.55;
+        var sp = d.mode === 'flee' ? 3.0 : 0.55;
         if(dist < 0.12){ d.mode = 'idle'; d.wait = 600 + Math.random()*1800; }
         else {
           d.x += dx/dist * sp * dt; d.y += dy/dist * sp * dt;
-          var scrMove = (dx - dy);
+          var scrMove = dx - dy;
           if(Math.abs(scrMove) > 0.02) d.flip = scrMove > 0 ? 1 : -1;
         }
       }
-      place(d, dt);
+      /* head pose: stand(0) -> mid(1) -> graze(2), one step at a time */
+      var target = d.mode === 'graze' ? 1 : 0;
+      if(d.pose !== target){
+        d.poseTimer -= dt*1000;
+        if(d.poseTimer <= 0){ d.pose += d.pose < target ? 1 : -1; d.poseTimer = 110; }
+      } else d.poseTimer = 0;
+      d.poses.forEach(function(pz, i){ pz.style.display = i === d.pose ? '' : 'none'; });
+      /* legs: trot gait, diagonal pairs in phase */
+      var targetAmp = d.mode === 'flee' ? 21 : (d.mode === 'walk' ? 11.5 : 0);
+      d.amp += (targetAmp - d.amp) * Math.min(1, dt*7);
+      if(moving) d.phase += dt * (d.mode === 'flee' ? 13 : 6.4);
+      if(d.amp > 0.05){
+        d.legs.forEach(function(lg){
+          var off = +lg.getAttribute('data-off');
+          lg.setAttribute('transform', 'rotate(' + (Math.sin(d.phase + off) * d.amp).toFixed(2) + ')');
+        });
+      } else {
+        d.legs.forEach(function(lg){ lg.setAttribute('transform', 'rotate(0)'); });
+      }
+      place(d);
     });
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 })();
 </script>
+
+</body>
+</html>
