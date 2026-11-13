@@ -139,6 +139,17 @@
 .print-item p{font-size:14.5px;line-height:1.8;margin:0}
 .print-scope{margin-top:20px;font-size:15px;line-height:1.9;background:#FBF6EA;border:1px dashed #D8C9A3;border-radius:14px;padding:18px 22px}
 @media(max-width:720px){.print-list{grid-template-columns:1fr}.case dl{grid-template-columns:1fr}.case dt{margin-top:6px}}
+
+/* ===== added 2026-11-14: fla mini-tools strip ===== */
+.fla-strip{grid-column:1/-1;background:#fff;border:1px solid #E4DFD2;border-radius:16px;padding:22px 26px}
+.fla-strip-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.fla-strip-tag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:#B4552D;font-weight:600}
+.fla-strip-head p{font-size:14.5px;margin:0;line-height:1.7}
+.fla-minis{display:flex;gap:20px;flex-wrap:wrap}
+.fla-mini{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:inherit;width:78px}
+.fla-mini img{width:64px;height:64px;object-fit:cover;border-radius:16px;border:1px solid #E4DFD2;transition:transform .18s ease}
+.fla-mini:hover img{transform:translateY(-3px)}
+.fla-mini span{font-size:12.5px;font-weight:600}
 </style>
 </head>
 <body id="top">
@@ -209,16 +220,7 @@
         </div>
       </article>
 
-      <article class="card">
-        <a class="shot" href="https://grafla.vercel.app"><img src="../img/grafla.jpg" alt="Grafla — メッシュグラデーション生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>Grafla</h3><span class="kind">GRADIENT ENGINE</span></div>
-          <p class="punch">グラデーションは「計算」で作る。</p>
-          <p class="desc">メッシュグラデーションの生成ツール。アニメーションする CSS の書き出しや、画像からの色抽出にも対応。フィルターをかけるのではなく、操れる「面」としてグラデーションを設計しています。</p>
-          <div class="card-links"><a href="https://grafla.vercel.app">ツールを開く →</a></div>
-        </div>
-      </article>
-
+      
       <article class="card">
         <a class="shot" href="https://tensec-iota.vercel.app"><img src="../img/tensec.jpg" alt="10sec — モーフィング対応のキーフレームアニメーションツール" width="1120" height="752" loading="lazy" decoding="async"></a>
         <div class="card-body">
@@ -261,47 +263,23 @@
         </div>
       </article>
 
+      <div class="fla-strip">
+        <div class="fla-strip-head"><span class="fla-strip-tag">MINI TOOLS</span><p>fla（フラ）シリーズ — デザイン業務を楽しくするために作った、小さな色の道具たち。</p></div>
+        <div class="fla-minis">
+          <a class="fla-mini" href="https://grafla.vercel.app"><img src="../img/grafla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>Grafla</span></a>
+          <a class="fla-mini" href="https://colorfla.vercel.app"><img src="../img/colorfla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>カラフラ</span></a>
+          <a class="fla-mini" href="https://colorfla-au5j.vercel.app"><img src="../img/connefla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>コネフラ</span></a>
+          <a class="fla-mini" href="https://minfla.vercel.app"><img src="../img/minfla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>ミンフラ</span></a>
+          <a class="fla-mini" href="https://swifla.vercel.app"><img src="../img/swifla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>スイフラ</span></a>
+        </div>
+      </div>
+
+
       
-      <article class="card">
-        <a class="shot" href="https://colorfla.vercel.app"><img src="../img/colorfla.jpg" alt="カラフラ — カラーパレット生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>カラフラ — colorfla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
-          <p class="punch">配色は、センスではなく仕組みで引く。</p>
-          <p class="desc">カラーパレットの生成ツール。色同士の関係を計算で引き出す、Grafla と対になる「色」専門のエンジンです。デザイン実務の配色決めの出発点にも使えます。</p>
-          <div class="card-links"><a href="https://colorfla.vercel.app">ツールを開く →</a></div>
-        </div>
-      </article>
-
-      <article class="card">
-        <a class="shot" href="https://colorfla-au5j.vercel.app"><img src="../img/connefla.jpg" alt="コネフラ — 色のつながりを計算するパレット生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>コネフラ — connefla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
-          <p class="punch">色と色の「つながり」を計算する。</p>
-          <p class="desc">Grafla の兄弟シリーズ「フラ」の一員。1色ではなく、並べたときの関係からパレットを作る生成エンジンです。配色の「次に来る色」を、勘ではなく仕組みで引きます。</p>
-          <div class="card-links"><a href="https://colorfla-au5j.vercel.app">ツールを開く →</a></div>
-        </div>
-      </article>
-
-      <article class="card">
-        <a class="shot" href="https://minfla.vercel.app"><img src="../img/minfla.jpg" alt="ミンフラ — 色が混ざり合う過程を描く生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>ミンフラ — minfla</h3><span class="kind">GRADIENT / MINGLE</span></div>
-          <p class="punch">色が混ざる、その途中を描く。</p>
-          <p class="desc">「フラ」シリーズの一員（Mingle Flash）。色同士が混ざり合う過程そのものを生成する、単一ファイルのグラデーションエンジンです。混色の気持ちよさを、そのまま書き出せます。</p>
-          <div class="card-links"><a href="https://minfla.vercel.app">ツールを開く →</a></div>
-        </div>
-      </article>
-
-      <article class="card">
-        <a class="shot" href="https://swifla.vercel.app"><img src="../img/swifla.jpg" alt="スイフラ — 色の切り替わりを生成するツール" width="1120" height="752" loading="lazy" decoding="async"></a>
-        <div class="card-body">
-          <div class="card-top"><h3>スイフラ — swifla</h3><span class="kind">GRADIENT / SWITCH</span></div>
-          <p class="punch">切り替わる色の、気持ちよさ。</p>
-          <p class="desc">「フラ」シリーズの一員（Switch Flash）。色の切り替わりを生成する単一ファイルのエンジンです。Grafla・カラフラ・コネフラ・ミンフラと並ぶ、色の実験室シリーズ。</p>
-          <div class="card-links"><a href="https://swifla.vercel.app">ツールを開く →</a></div>
-        </div>
-      </article>
-
+      
+      
+      
+      
 
 
     </div>
