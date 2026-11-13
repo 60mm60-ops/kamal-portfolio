@@ -123,6 +123,22 @@
   footer{padding:38px 0 48px;color:var(--muted);font-size:13.5px}
   footer .mono{font-family:var(--mono);letter-spacing:.14em;color:var(--ink)}
   .lang-link{position:absolute;top:22px;right:24px;z-index:5;font-family:var(--mono);font-size:12.5px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.5);padding:6px 14px;border-radius:999px}
+
+/* ===== added 2026-11-14: case study + print record ===== */
+.case{margin-top:44px;background:#fff;border:1px solid #E4DFD2;border-radius:16px;padding:30px 32px}
+.case .case-tag{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.18em;color:#B4552D;font-weight:600}
+.case h3{font-size:22px;margin:8px 0 14px;line-height:1.5}
+.case dl{display:grid;grid-template-columns:86px 1fr;gap:10px 18px;font-size:15px;line-height:1.8}
+.case dt{font-weight:700;color:#8A6D4F}
+.case dd{margin:0}
+.case .result{margin-top:16px;font-weight:700;font-size:16px}
+.more-works{margin-top:26px;text-align:center;font-size:15px}
+.print-list{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;margin-top:8px}
+.print-item{background:#fff;border:1px solid #E4DFD2;border-radius:14px;padding:20px 22px}
+.print-item h3{font-size:17px;margin:0 0 8px}
+.print-item p{font-size:14.5px;line-height:1.8;margin:0}
+.print-scope{margin-top:20px;font-size:15px;line-height:1.9;background:#FBF6EA;border:1px dashed #D8C9A3;border-radius:14px;padding:18px 22px}
+@media(max-width:720px){.print-list{grid-template-columns:1fr}.case dl{grid-template-columns:1fr}.case dt{margin-top:6px}}
 </style>
 </head>
 <body id="top">
@@ -233,6 +249,61 @@
         </div>
       </article>
 
+      
+      
+      <article class="card">
+        <a class="shot" href="https://cooking-ivory.vercel.app"><img src="../img/cooking.jpg" alt="レシピ工程タイマー — 手順ごとに時間を管理するタイマー" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>レシピ工程タイマー</h3><span class="kind">KITCHEN / STEP TIMER</span></div>
+          <p class="punch">手が離せない台所に、工程の相棒を。</p>
+          <p class="desc">レシピの手順ごとに時間を管理する工程タイマー。「次に何をするか」と「あと何分待つか」を同時に運んで、料理中の迷子と焦げ付きをなくします。</p>
+          <div class="card-links"><a href="https://cooking-ivory.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      
+      <article class="card">
+        <a class="shot" href="https://colorfla.vercel.app"><img src="../img/colorfla.jpg" alt="カラフラ — カラーパレット生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>カラフラ — colorfla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
+          <p class="punch">配色は、センスではなく仕組みで引く。</p>
+          <p class="desc">カラーパレットの生成ツール。色同士の関係を計算で引き出す、Grafla と対になる「色」専門のエンジンです。デザイン実務の配色決めの出発点にも使えます。</p>
+          <div class="card-links"><a href="https://colorfla.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://colorfla-au5j.vercel.app"><img src="../img/connefla.jpg" alt="コネフラ — 色のつながりを計算するパレット生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>コネフラ — connefla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
+          <p class="punch">色と色の「つながり」を計算する。</p>
+          <p class="desc">Grafla の兄弟シリーズ「フラ」の一員。1色ではなく、並べたときの関係からパレットを作る生成エンジンです。配色の「次に来る色」を、勘ではなく仕組みで引きます。</p>
+          <div class="card-links"><a href="https://colorfla-au5j.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://minfla.vercel.app"><img src="../img/minfla.jpg" alt="ミンフラ — 色が混ざり合う過程を描く生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>ミンフラ — minfla</h3><span class="kind">GRADIENT / MINGLE</span></div>
+          <p class="punch">色が混ざる、その途中を描く。</p>
+          <p class="desc">「フラ」シリーズの一員（Mingle Flash）。色同士が混ざり合う過程そのものを生成する、単一ファイルのグラデーションエンジンです。混色の気持ちよさを、そのまま書き出せます。</p>
+          <div class="card-links"><a href="https://minfla.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://swifla.vercel.app"><img src="../img/swifla.jpg" alt="スイフラ — 色の切り替わりを生成するツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>スイフラ — swifla</h3><span class="kind">GRADIENT / SWITCH</span></div>
+          <p class="punch">切り替わる色の、気持ちよさ。</p>
+          <p class="desc">「フラ」シリーズの一員（Switch Flash）。色の切り替わりを生成する単一ファイルのエンジンです。Grafla・カラフラ・コネフラ・ミンフラと並ぶ、色の実験室シリーズ。</p>
+          <div class="card-links"><a href="https://swifla.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+
+
     </div>
 
     <div class="metrics">
@@ -241,6 +312,32 @@
       <div class="metric"><div class="num">約100</div><div class="lbl">1つのツールに開いたパラメータの数。すべてシードから同じ結果を再現できます</div></div>
       <div class="metric"><div class="num">1台</div><div class="lbl">このページの全エンジンは、スマートフォン1台で設計・開発されました</div></div>
     </div>
+    <div class="case">
+      <span class="case-tag">CASE STUDY</span>
+      <h3>事例：通販ECサイトの改善 — 月商 約5万円 → 約30万円（2ヶ月）</h3>
+      <dl>
+        <dt>課題</dt><dd>商品はあるのに売れない。検索からの流入、商品ページの見せ方、受注まわりの手間の3か所に問題がありました。</dd>
+        <dt>やったこと</dt><dd>SEOとUIの全面刷新（商品ページの構成・写真・コピーを総点検して作り直し）。あわせて、受注業務を軽くする専用アプリを自作して運用に組み込みました。</dd>
+        <dt>結果</dt><dd>2ヶ月で月商は約6倍に。デザインと仕組みの両方を触れることが、そのまま売上に効いた事例です。</dd>
+      </dl>
+    </div>
+    <p class="more-works">ここに載せた以外の作品も含め、20のリポジトリを <a href="https://github.com/60mm60-ops">GitHub</a> で公開しています。</p>
+  </div>
+</section>
+
+
+<!-- ================= PRINT RECORD ================= -->
+<section id="print">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">PRINT / DTP</span><h2>印刷・DTPの実績</h2></div>
+    <p class="sec-lead">勤務先・クライアントの制作物は守秘のため実物を掲載できません。代わりに、16年の現場で対応してきた領域と範囲をまとめます。仕様のご相談だけでも歓迎です。</p>
+    <div class="print-list">
+      <div class="print-item"><h3>通販・EC</h3><p>商品カタログ、販促チラシ、同梱リーフレット、キャンペーン告知物。売上に直結する販促物の改善が得意です。</p></div>
+      <div class="print-item"><h3>広告・プロモーション</h3><p>広告代理店でのDTP制作実務。チラシ・フライヤー・雑誌広告など、媒体に合わせた版面設計と入稿データ作成。</p></div>
+      <div class="print-item"><h3>出版・編集</h3><p>雑誌・書籍まわりの組版と、コミックエッセイの商業出版（自著）。縦組み・多ページものの扱いに慣れています。</p></div>
+      <div class="print-item"><h3>企業・店舗</h3><p>会社案内、パンフレット、店舗チラシなど。企画の段階から「誰に・何を伝えるか」を一緒に整理します。</p></div>
+    </div>
+    <p class="print-scope">対応範囲：企画・構成 → デザイン → 色校正 → 印刷入稿データ作成（Illustrator / InDesign、PDF入稿対応）。入稿作業を軽くする自動化スクリプトの開発実績もあります。「入稿事故のないデータ作り」が16年の看板です。</p>
   </div>
 </section>
 
