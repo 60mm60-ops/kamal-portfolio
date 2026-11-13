@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMAL — 仕組みから作る、デザインとWebツール</title>
+<meta name="description" content="奈良のデザインエンジニア。DTP・印刷物デザイン16年。印刷物からWeb、ブラウザで動くインタラクティブなツールまで、再現性のある「仕組み」として設計します。">
+<link rel="canonical" href="https://kamal-portfolio-amber.vercel.app/ja">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 92,38 50,96 8,38' fill='%230E9594'/%3E%3Cpolygon points='50,4 92,38 50,52 8,38' fill='%232EC4A6'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kamal-portfolio-amber.vercel.app/ja">
+<meta property="og:title" content="KAMAL — 仕組みから作る、デザインとWebツール">
+<meta property="og:description" content="DTP・印刷物デザイン16年。印刷物からWeb、触れるツールまで、仕組みから設計する奈良のデザインエンジニア。">
+<meta property="og:image" content="https://kamal-portfolio-amber.vercel.app/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#073B4C;
+    --blue:#0B5FA5;
+    --teal:#0E9594;
+    --turq:#2EC4A6;
+    --mint:#DFF7EE;
+    --bg:#F3FAF7;
+    --ink:#0C2B33;
+    --muted:#4A6B66;
+    --card:#FFFFFF;
+    --line:#D8EDE6;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --body:'Noto Sans JP',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;overflow:hidden;background:linear-gradient(180deg,#083A5E 0%,#0B5FA5 34%,#0E8388 62%,#17A78E 82%,#2EC4A6 100%);color:#fff}
+  .hero svg.forest{position:absolute;inset:0;width:100%;height:100%}
+  .hero-inner{position:relative;z-index:3;padding:120px 0 300px}
+  .eyebrow{display:inline-block;font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);padding:6px 14px;border-radius:999px;backdrop-filter:blur(4px)}
+  .hero h1{font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1.35;margin:26px 0 20px;text-shadow:0 2px 24px rgba(4,40,50,.35)}
+  .hero h1 .hl{color:#A9F0D8}
+  .hero-sub{max-width:620px;font-size:17px;line-height:2;color:rgba(255,255,255,.92)}
+  .hero-cta{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:13px 28px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px}
+  .btn-primary{background:#fff;color:#075E63}
+  .btn-ghost{border:1.5px solid rgba(255,255,255,.75);color:#fff}
+  .badges{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+  .badges span{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;border:1px solid rgba(255,255,255,.45);padding:5px 12px;border-radius:999px;color:rgba(255,255,255,.95)}
+  .badges span.hot{background:#A9F0D8;color:#065A50;border-color:transparent;font-weight:600}
+  .firefly{position:absolute;border-radius:50%;background:#E8FFD9;box-shadow:0 0 10px 3px rgba(232,255,217,.75);z-index:2;animation:drift ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translate(0,0);opacity:.35}50%{opacity:1}to{transform:translate(26px,-34px);opacity:.5}}
+  @media (prefers-reduced-motion: reduce){.firefly{animation:none}}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:88px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+  .sec-tag{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--teal);font-weight:600}
+  h2{font-size:clamp(24px,3.6vw,34px);font-weight:900}
+  .sec-lead{color:var(--muted);max-width:720px;margin-bottom:40px}
+
+  .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 24px}
+  .svc .no{font-family:var(--mono);color:var(--turq);font-weight:600;font-size:13px}
+  .svc h3{font-size:18px;font-weight:700;margin:8px 0 8px}
+  .svc p{font-size:14.5px;color:var(--muted);line-height:1.85}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+  .card .shot{display:block;aspect-ratio:1120/752;overflow:hidden;background:var(--mint)}
+  .card .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .card-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .card-top h3{font-size:19px;font-weight:700}
+  .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--teal);white-space:nowrap}
+  .punch{font-weight:700;color:#075E63}
+  .desc{font-size:14.5px;color:var(--muted);line-height:1.85;flex:1}
+  .card-links a{font-weight:700;color:var(--blue);text-decoration:none;font-size:14.5px}
+
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:56px 0 8px}
+  .metric{background:linear-gradient(135deg,#0B5FA5,#0E9594);color:#fff;border-radius:16px;padding:24px}
+  .metric .num{font-size:30px;font-weight:900;font-family:var(--mono)}
+  .metric .lbl{font-size:13.5px;line-height:1.7;opacity:.92;margin-top:6px}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;counter-reset:step}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .step .n{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--turq);color:#fff;font-weight:700;align-items:center;justify-content:center;font-family:var(--mono);margin-bottom:10px}
+  .step h3{font-size:16.5px;font-weight:700;margin-bottom:6px}
+  .step p{font-size:14px;color:var(--muted);line-height:1.8}
+
+  .motto{border-left:4px solid var(--turq);background:var(--card);border-radius:0 16px 16px 0;padding:26px 28px;font-size:17px;font-weight:500;line-height:2;margin-bottom:26px}
+  .motto .my{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:var(--teal);margin-bottom:8px}
+  .about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+  .about-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+  .about-card h3{font-size:17px;font-weight:700;margin-bottom:10px}
+  .about-card p{font-size:14.5px;color:var(--muted);line-height:1.9;margin-bottom:10px}
+  .about-card p:last-child{margin-bottom:0}
+
+  .contact{background:linear-gradient(150deg,#073B4C,#0B5FA5 55%,#0E9594);color:#fff;border-radius:24px;padding:52px clamp(24px,5vw,56px);margin-bottom:88px}
+  .contact h2{color:#fff}
+  .contact p{color:rgba(255,255,255,.9);max-width:640px}
+  .contact .gh-line{margin-top:14px}
+  .contact .gh-line a{color:#A9F0D8;font-weight:700;text-decoration:none}
+  .contact-form{margin-top:30px;display:grid;gap:16px;max-width:560px}
+  .contact-form label{display:grid;gap:6px;font-size:13.5px;font-weight:500}
+  .contact-form .req{color:#FFB3CB;font-style:normal;font-size:11.5px;margin-left:6px}
+  .contact-form input,.contact-form textarea{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#fff;font-family:var(--body);font-size:15px}
+  .contact-form input::placeholder,.contact-form textarea::placeholder{color:rgba(255,255,255,.55)}
+  .contact-form .send{background:#fff;color:#075E63;border:none;font-weight:700;font-size:15.5px;padding:14px;border-radius:999px;cursor:pointer}
+  .sent-note{margin-top:30px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:14px;padding:22px 24px;max-width:560px}
+  .sent-note .big{font-size:18px;font-weight:700}
+
+  footer{padding:38px 0 48px;color:var(--muted);font-size:13.5px}
+  footer .mono{font-family:var(--mono);letter-spacing:.14em;color:var(--ink)}
+  .lang-link{position:absolute;top:22px;right:24px;z-index:5;font-family:var(--mono);font-size:12.5px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.5);padding:6px 14px;border-radius:999px}
+</style>
+</head>
+<body id="top">
+
+<header class="hero">
+  <a class="lang-link" href="/">ENGLISH →</a>
+  <svg class="forest" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0,900 L0,590.6 L40,592.1 L80,592.1 L120,590.9 L160,588.6 L200,585.5 L240,582.0 L280,578.5 L320,575.2 L360,572.6 L400,570.6 L440,569.5 L480,569.1 L520,569.4 L560,570.0 L600,570.8 L640,571.3 L680,571.3 L720,570.5 L760,568.8 L800,565.9 L840,562.0 L880,557.1 L920,551.5 L960,545.5 L1000,539.4 L1040,533.8 L1080,528.9 L1120,525.2 L1160,522.8 L1200,522.0 L1240,522.9 L1280,525.2 L1320,528.9 L1360,533.7 L1400,539.1 L1440,544.9 L1440,900 Z" fill="#4FB3A9" opacity="0.55"/><rect x="23.2" y="587.5" width="2.0" height="6.2" fill="#4FB3A9"/><circle cx="24.2" cy="574.3" r="6.6" fill="#4FB3A9"/><circle cx="19.1" cy="578.2" r="4.6" fill="#4FB3A9"/><circle cx="29.2" cy="577.8" r="5.0" fill="#4FB3A9"/><circle cx="22.2" cy="571.2" r="4.6" fill="#4FB3A9"/><circle cx="26.9" cy="572.0" r="4.3" fill="#4FB3A9"/><rect x="64.4" y="587.3" width="2.3" height="7.0" fill="#4FB3A9"/><circle cx="65.6" cy="572.3" r="7.5" fill="#4FB3A9"/><circle cx="59.9" cy="576.7" r="5.3" fill="#4FB3A9"/><circle cx="71.3" cy="576.3" r="5.7" fill="#4FB3A9"/><circle cx="63.4" cy="568.8" r="5.3" fill="#4FB3A9"/><circle cx="68.7" cy="569.7" r="4.8" fill="#4FB3A9"/><rect x="68.9" y="590.4" width="1.7" height="3.8" fill="#4FB3A9"/><polygon points="69.8,580.8 64.8,593.4 74.8,593.4" fill="#4FB3A9"/><polygon points="69.8,573.0 66.0,585.6 73.6,585.6" fill="#4FB3A9"/><polygon points="69.8,565.2 67.2,577.8 72.4,577.8" fill="#4FB3A9"/><rect x="188.3" y="582.5" width="1.9" height="5.8" fill="#4FB3A9"/><circle cx="189.2" cy="570.1" r="6.2" fill="#4FB3A9"/><circle cx="184.5" cy="573.8" r="4.4" fill="#4FB3A9"/><circle cx="194.0" cy="573.4" r="4.7" fill="#4FB3A9"/><circle cx="187.4" cy="567.2" r="4.4" fill="#4FB3A9"/><circle cx="191.8" cy="567.9" r="4.0" fill="#4FB3A9"/><rect x="273.3" y="575.4" width="2.5" height="5.6" fill="#4FB3A9"/><polygon points="274.5,561.4 267.3,579.7 281.8,579.7" fill="#4FB3A9"/><polygon points="274.5,550.1 269.0,568.4 280.1,568.4" fill="#4FB3A9"/><polygon points="274.5,538.8 270.8,557.1 278.3,557.1" fill="#4FB3A9"/><rect x="291.3" y="575.5" width="1.7" height="3.9" fill="#4FB3A9"/><polygon points="292.1,565.8 287.1,578.6 297.2,578.6" fill="#4FB3A9"/><polygon points="292.1,557.9 288.3,570.7 296.0,570.7" fill="#4FB3A9"/><polygon points="292.1,550.0 289.5,562.8 294.8,562.8" fill="#4FB3A9"/><rect x="312.1" y="573.3" width="2.0" height="4.5" fill="#4FB3A9"/><polygon points="313.1,562.0 307.2,576.8 318.9,576.8" fill="#4FB3A9"/><polygon points="313.1,552.9 308.6,567.6 317.5,567.6" fill="#4FB3A9"/><polygon points="313.1,543.7 310.0,558.5 316.1,558.5" fill="#4FB3A9"/><rect x="323.3" y="573.3" width="1.6" height="3.6" fill="#4FB3A9"/><polygon points="324.1,564.2 319.4,576.1 328.9,576.1" fill="#4FB3A9"/><polygon points="324.1,556.8 320.5,568.7 327.7,568.7" fill="#4FB3A9"/><polygon points="324.1,549.4 321.6,561.3 326.6,561.3" fill="#4FB3A9"/><rect x="414.0" y="566.9" width="2.3" height="5.1" fill="#4FB3A9"/><polygon points="415.2,554.1 408.5,571.0 421.9,571.0" fill="#4FB3A9"/><polygon points="415.2,543.7 410.1,560.5 420.3,560.5" fill="#4FB3A9"/><polygon points="415.2,533.2 411.7,550.1 418.6,550.1" fill="#4FB3A9"/><rect x="454.8" y="565.1" width="2.0" height="6.1" fill="#4FB3A9"/><circle cx="455.8" cy="552.1" r="6.5" fill="#4FB3A9"/><circle cx="450.8" cy="555.9" r="4.6" fill="#4FB3A9"/><circle cx="460.7" cy="555.5" r="5.0" fill="#4FB3A9"/><circle cx="453.8" cy="549.0" r="4.6" fill="#4FB3A9"/><circle cx="458.4" cy="549.8" r="4.2" fill="#4FB3A9"/><rect x="466.6" y="565.3" width="1.9" height="5.9" fill="#4FB3A9"/><circle cx="467.5" cy="552.9" r="6.2" fill="#4FB3A9"/><circle cx="462.7" cy="556.5" r="4.4" fill="#4FB3A9"/><circle cx="472.3" cy="556.1" r="4.8" fill="#4FB3A9"/><circle cx="465.7" cy="549.9" r="4.4" fill="#4FB3A9"/><circle cx="470.1" cy="550.7" r="4.0" fill="#4FB3A9"/><rect x="478.0" y="566.0" width="2.2" height="5.1" fill="#4FB3A9"/><polygon points="479.1,553.4 472.5,570.0 485.7,570.0" fill="#4FB3A9"/><polygon points="479.1,543.1 474.1,559.7 484.1,559.7" fill="#4FB3A9"/><polygon points="479.1,532.8 475.7,549.4 482.5,549.4" fill="#4FB3A9"/><rect x="484.1" y="565.1" width="2.0" height="6.0" fill="#4FB3A9"/><circle cx="485.1" cy="552.4" r="6.4" fill="#4FB3A9"/><circle cx="480.2" cy="556.1" r="4.5" fill="#4FB3A9"/><circle cx="490.0" cy="555.7" r="4.9" fill="#4FB3A9"/><circle cx="483.2" cy="549.4" r="4.5" fill="#4FB3A9"/><circle cx="487.7" cy="550.1" r="4.1" fill="#4FB3A9"/><rect x="605.3" y="564.2" width="2.8" height="8.7" fill="#4FB3A9"/><circle cx="606.7" cy="545.7" r="9.2" fill="#4FB3A9"/><circle cx="599.6" cy="551.1" r="6.5" fill="#4FB3A9"/><circle cx="613.7" cy="550.6" r="7.1" fill="#4FB3A9"/><circle cx="603.9" cy="541.3" r="6.5" fill="#4FB3A9"/><circle cx="610.5" cy="542.4" r="6.0" fill="#4FB3A9"/><rect x="680.6" y="568.3" width="2.2" height="5.0" fill="#4FB3A9"/><polygon points="681.7,555.8 675.1,572.2 688.2,572.2" fill="#4FB3A9"/><polygon points="681.7,545.6 676.7,562.0 686.6,562.0" fill="#4FB3A9"/><polygon points="681.7,535.4 678.3,551.8 685.1,551.8" fill="#4FB3A9"/><rect x="818.5" y="562.2" width="1.7" height="3.9" fill="#4FB3A9"/><polygon points="819.3,552.4 814.2,565.3 824.4,565.3" fill="#4FB3A9"/><polygon points="819.3,544.5 815.5,557.3 823.2,557.3" fill="#4FB3A9"/><polygon points="819.3,536.5 816.7,549.4 822.0,549.4" fill="#4FB3A9"/><rect x="819.3" y="557.0" width="2.9" height="9.0" fill="#4FB3A9"/><circle cx="820.8" cy="537.9" r="9.6" fill="#4FB3A9"/><circle cx="813.5" cy="543.5" r="6.7" fill="#4FB3A9"/><circle cx="828.1" cy="543.0" r="7.3" fill="#4FB3A9"/><circle cx="818.0" cy="533.4" r="6.7" fill="#4FB3A9"/><circle cx="824.7" cy="534.5" r="6.2" fill="#4FB3A9"/><rect x="869.5" y="553.1" width="2.3" height="7.2" fill="#4FB3A9"/><circle cx="870.7" cy="537.9" r="7.6" fill="#4FB3A9"/><circle cx="864.9" cy="542.4" r="5.4" fill="#4FB3A9"/><circle cx="876.5" cy="541.9" r="5.8" fill="#4FB3A9"/><circle cx="868.4" cy="534.3" r="5.4" fill="#4FB3A9"/><circle cx="873.8" cy="535.2" r="4.9" fill="#4FB3A9"/><rect x="871.5" y="553.2" width="2.2" height="6.8" fill="#4FB3A9"/><circle cx="872.6" cy="538.7" r="7.3" fill="#4FB3A9"/><circle cx="867.1" cy="543.0" r="5.1" fill="#4FB3A9"/><circle cx="878.2" cy="542.5" r="5.6" fill="#4FB3A9"/><circle cx="870.5" cy="535.3" r="5.1" fill="#4FB3A9"/><circle cx="875.6" cy="536.1" r="4.7" fill="#4FB3A9"/><rect x="1044.6" y="528.3" width="2.2" height="6.8" fill="#4FB3A9"/><circle cx="1045.7" cy="513.9" r="7.2" fill="#4FB3A9"/><circle cx="1040.2" cy="518.1" r="5.1" fill="#4FB3A9"/><circle cx="1051.2" cy="517.7" r="5.5" fill="#4FB3A9"/><circle cx="1043.6" cy="510.5" r="5.1" fill="#4FB3A9"/><circle cx="1048.7" cy="511.4" r="4.6" fill="#4FB3A9"/><rect x="1178.9" y="520.2" width="1.8" height="4.0" fill="#4FB3A9"/><polygon points="1179.8,510.2 1174.6,523.4 1185.0,523.4" fill="#4FB3A9"/><polygon points="1179.8,502.1 1175.8,515.2 1183.7,515.2" fill="#4FB3A9"/><polygon points="1179.8,494.0 1177.1,507.1 1182.5,507.1" fill="#4FB3A9"/><rect x="1183.2" y="519.5" width="2.0" height="4.6" fill="#4FB3A9"/><polygon points="1184.3,507.9 1178.2,523.1 1190.3,523.1" fill="#4FB3A9"/><polygon points="1184.3,498.5 1179.7,513.7 1188.9,513.7" fill="#4FB3A9"/><polygon points="1184.3,489.1 1181.1,504.3 1187.4,504.3" fill="#4FB3A9"/><rect x="1264.0" y="518.7" width="2.4" height="7.5" fill="#4FB3A9"/><circle cx="1265.2" cy="502.8" r="7.9" fill="#4FB3A9"/><circle cx="1259.1" cy="507.5" r="5.6" fill="#4FB3A9"/><circle cx="1271.3" cy="507.0" r="6.1" fill="#4FB3A9"/><circle cx="1262.9" cy="499.1" r="5.6" fill="#4FB3A9"/><circle cx="1268.5" cy="500.0" r="5.1" fill="#4FB3A9"/><rect x="1284.8" y="522.2" width="2.4" height="5.5" fill="#4FB3A9"/><polygon points="1286.0,508.4 1278.8,526.5 1293.1,526.5" fill="#4FB3A9"/><polygon points="1286.0,497.3 1280.5,515.3 1291.4,515.3" fill="#4FB3A9"/><polygon points="1286.0,486.1 1282.2,504.1 1289.7,504.1" fill="#4FB3A9"/><rect x="1304.7" y="522.6" width="2.2" height="6.8" fill="#4FB3A9"/><circle cx="1305.8" cy="508.1" r="7.3" fill="#4FB3A9"/><circle cx="1300.3" cy="512.4" r="5.1" fill="#4FB3A9"/><circle cx="1311.4" cy="511.9" r="5.6" fill="#4FB3A9"/><circle cx="1303.7" cy="504.7" r="5.1" fill="#4FB3A9"/><circle cx="1308.8" cy="505.5" r="4.7" fill="#4FB3A9"/><rect x="1309.8" y="526.1" width="1.7" height="3.8" fill="#4FB3A9"/><polygon points="1310.6,516.6 1305.7,529.1 1315.6,529.1" fill="#4FB3A9"/><polygon points="1310.6,508.8 1306.9,521.3 1314.4,521.3" fill="#4FB3A9"/><polygon points="1310.6,501.0 1308.1,513.6 1313.2,513.6" fill="#4FB3A9"/><ellipse cx="561" cy="606" rx="413" ry="17" fill="#FFFFFF" opacity="0.10"/><path d="M0,900 L0,598.0 L40,600.8 L80,605.5 L120,612.0 L160,619.9 L200,628.8 L240,638.2 L280,647.4 L320,655.9 L360,663.3 L400,669.1 L440,673.2 L480,675.4 L520,675.9 L560,674.8 L600,672.5 L640,669.4 L680,666.0 L720,662.7 L760,659.9 L800,658.0 L840,657.0 L880,657.1 L920,658.1 L960,659.7 L1000,661.6 L1040,663.3 L1080,664.5 L1120,664.8 L1160,663.7 L1200,661.0 L1240,656.7 L1280,650.9 L1320,643.7 L1360,635.5 L1400,626.7 L1440,618.0 L1440,900 Z" fill="#239E93" opacity="0.75"/><rect x="40.7" y="591.0" width="3.9" height="12.0" fill="#239E93"/><circle cx="42.6" cy="565.6" r="12.7" fill="#239E93"/><circle cx="32.9" cy="573.1" r="9.0" fill="#239E93"/><circle cx="52.4" cy="572.3" r="9.7" fill="#239E93"/><circle cx="38.9" cy="559.6" r="9.0" fill="#239E93"/><circle cx="47.9" cy="561.1" r="8.2" fill="#239E93"/><rect x="52.3" y="595.6" width="3.8" height="8.7" fill="#239E93"/><polygon points="54.2,573.9 42.9,602.3 65.5,602.3" fill="#239E93"/><polygon points="54.2,556.3 45.6,584.7 62.8,584.7" fill="#239E93"/><polygon points="54.2,538.7 48.4,567.1 60.1,567.1" fill="#239E93"/><rect x="160.1" y="608.9" width="4.4" height="13.5" fill="#239E93"/><circle cx="162.3" cy="580.1" r="14.4" fill="#239E93"/><circle cx="151.3" cy="588.6" r="10.2" fill="#239E93"/><circle cx="173.3" cy="587.7" r="11.0" fill="#239E93"/><circle cx="158.1" cy="573.3" r="10.2" fill="#239E93"/><circle cx="168.2" cy="575.0" r="9.3" fill="#239E93"/><rect x="182.0" y="620.9" width="2.7" height="6.1" fill="#239E93"/><polygon points="183.3,605.7 175.4,625.7 191.3,625.7" fill="#239E93"/><polygon points="183.3,593.3 177.3,613.3 189.4,613.3" fill="#239E93"/><polygon points="183.3,581.0 179.2,601.0 187.5,601.0" fill="#239E93"/><rect x="222.4" y="626.1" width="3.4" height="10.3" fill="#239E93"/><circle cx="224.0" cy="604.2" r="11.0" fill="#239E93"/><circle cx="215.7" cy="610.6" r="7.7" fill="#239E93"/><circle cx="232.4" cy="610.0" r="8.4" fill="#239E93"/><circle cx="220.8" cy="599.0" r="7.7" fill="#239E93"/><circle cx="228.6" cy="600.3" r="7.1" fill="#239E93"/><rect x="251.4" y="631.4" width="3.8" height="11.8" fill="#239E93"/><circle cx="253.3" cy="606.3" r="12.6" fill="#239E93"/><circle cx="243.7" cy="613.7" r="8.9" fill="#239E93"/><circle cx="263.0" cy="612.9" r="9.6" fill="#239E93"/><circle cx="249.6" cy="600.3" r="8.9" fill="#239E93"/><circle cx="258.5" cy="601.8" r="8.1" fill="#239E93"/><rect x="294.4" y="640.4" width="4.1" height="12.6" fill="#239E93"/><circle cx="296.5" cy="613.6" r="13.4" fill="#239E93"/><circle cx="286.2" cy="621.5" r="9.5" fill="#239E93"/><circle cx="306.7" cy="620.7" r="10.2" fill="#239E93"/><circle cx="292.5" cy="607.3" r="9.5" fill="#239E93"/><circle cx="302.0" cy="608.8" r="8.7" fill="#239E93"/><rect x="443.9" y="661.7" width="4.5" height="13.9" fill="#239E93"/><circle cx="446.2" cy="632.1" r="14.8" fill="#239E93"/><circle cx="434.9" cy="640.8" r="10.5" fill="#239E93"/><circle cx="457.5" cy="639.9" r="11.3" fill="#239E93"/><circle cx="441.8" cy="625.1" r="10.5" fill="#239E93"/><circle cx="452.3" cy="626.9" r="9.6" fill="#239E93"/><rect x="496.3" y="668.2" width="3.1" height="9.6" fill="#239E93"/><circle cx="497.9" cy="647.7" r="10.2" fill="#239E93"/><circle cx="490.1" cy="653.8" r="7.2" fill="#239E93"/><circle cx="505.7" cy="653.2" r="7.8" fill="#239E93"/><circle cx="494.9" cy="642.9" r="7.2" fill="#239E93"/><circle cx="502.1" cy="644.1" r="6.6" fill="#239E93"/><rect x="675.1" y="656.3" width="3.9" height="11.9" fill="#239E93"/><circle cx="677.1" cy="631.0" r="12.6" fill="#239E93"/><circle cx="667.4" cy="638.5" r="8.9" fill="#239E93"/><circle cx="686.7" cy="637.7" r="9.7" fill="#239E93"/><circle cx="673.3" cy="625.1" r="8.9" fill="#239E93"/><circle cx="682.3" cy="626.6" r="8.2" fill="#239E93"/><rect x="775.4" y="654.6" width="2.8" height="6.4" fill="#239E93"/><polygon points="776.8,638.6 768.4,659.6 785.1,659.6" fill="#239E93"/><polygon points="776.8,625.6 770.4,646.6 783.1,646.6" fill="#239E93"/><polygon points="776.8,612.6 772.4,633.6 781.1,633.6" fill="#239E93"/><rect x="943.7" y="649.1" width="3.9" height="11.9" fill="#239E93"/><circle cx="945.6" cy="623.7" r="12.7" fill="#239E93"/><circle cx="935.9" cy="631.2" r="9.0" fill="#239E93"/><circle cx="955.3" cy="630.4" r="9.7" fill="#239E93"/><circle cx="941.9" cy="617.7" r="9.0" fill="#239E93"/><circle cx="950.8" cy="619.2" r="8.2" fill="#239E93"/><rect x="974.3" y="656.5" width="2.6" height="5.9" fill="#239E93"/><polygon points="975.6,641.7 967.9,661.1 983.3,661.1" fill="#239E93"/><polygon points="975.6,629.7 969.7,649.1 981.4,649.1" fill="#239E93"/><polygon points="975.6,617.6 971.6,637.1 979.6,637.1" fill="#239E93"/><rect x="986.3" y="650.9" width="3.9" height="12.1" fill="#239E93"/><circle cx="988.3" cy="625.1" r="12.9" fill="#239E93"/><circle cx="978.4" cy="632.6" r="9.1" fill="#239E93"/><circle cx="998.1" cy="631.9" r="9.9" fill="#239E93"/><circle cx="984.5" cy="619.0" r="9.1" fill="#239E93"/><circle cx="993.6" cy="620.5" r="8.3" fill="#239E93"/><rect x="1157.8" y="657.2" width="3.7" height="8.5" fill="#239E93"/><polygon points="1159.6,635.9 1148.6,663.8 1170.7,663.8" fill="#239E93"/><polygon points="1159.6,618.7 1151.2,646.6 1168.0,646.6" fill="#239E93"/><polygon points="1159.6,601.4 1153.9,629.3 1165.4,629.3" fill="#239E93"/><rect x="1182.0" y="656.2" width="3.5" height="8.1" fill="#239E93"/><polygon points="1183.8,636.1 1173.3,662.5 1194.3,662.5" fill="#239E93"/><polygon points="1183.8,619.8 1175.8,646.2 1191.8,646.2" fill="#239E93"/><polygon points="1183.8,603.4 1178.4,629.8 1189.3,629.8" fill="#239E93"/><rect x="1303.6" y="640.7" width="3.4" height="7.8" fill="#239E93"/><polygon points="1305.3,621.2 1295.2,646.8 1315.4,646.8" fill="#239E93"/><polygon points="1305.3,605.4 1297.6,631.0 1313.0,631.0" fill="#239E93"/><polygon points="1305.3,589.7 1300.0,615.2 1310.6,615.2" fill="#239E93"/><rect x="1355.7" y="629.0" width="3.0" height="9.1" fill="#239E93"/><circle cx="1357.2" cy="609.6" r="9.7" fill="#239E93"/><circle cx="1349.8" cy="615.3" r="6.8" fill="#239E93"/><circle cx="1364.6" cy="614.7" r="7.4" fill="#239E93"/><circle cx="1354.3" cy="605.1" r="6.8" fill="#239E93"/><circle cx="1361.2" cy="606.2" r="6.3" fill="#239E93"/><rect x="1357.1" y="628.3" width="3.1" height="9.5" fill="#239E93"/><circle cx="1358.6" cy="608.0" r="10.1" fill="#239E93"/><circle cx="1350.9" cy="614.0" r="7.1" fill="#239E93"/><circle cx="1366.3" cy="613.4" r="7.7" fill="#239E93"/><circle cx="1355.6" cy="603.3" r="7.1" fill="#239E93"/><circle cx="1362.8" cy="604.4" r="6.5" fill="#239E93"/><rect x="1359.2" y="629.1" width="3.6" height="8.2" fill="#239E93"/><polygon points="1361.0,608.6 1350.4,635.5 1371.6,635.5" fill="#239E93"/><polygon points="1361.0,592.1 1352.9,618.9 1369.1,618.9" fill="#239E93"/><polygon points="1361.0,575.5 1355.5,602.3 1366.5,602.3" fill="#239E93"/><rect x="1410.3" y="615.5" width="3.4" height="10.5" fill="#239E93"/><circle cx="1412.1" cy="593.1" r="11.2" fill="#239E93"/><circle cx="1403.5" cy="599.7" r="7.9" fill="#239E93"/><circle cx="1420.6" cy="599.0" r="8.6" fill="#239E93"/><circle cx="1408.8" cy="587.8" r="7.9" fill="#239E93"/><circle cx="1416.7" cy="589.2" r="7.3" fill="#239E93"/><rect x="1415.4" y="612.6" width="4.0" height="12.3" fill="#239E93"/><circle cx="1417.4" cy="586.4" r="13.1" fill="#239E93"/><circle cx="1407.4" cy="594.1" r="9.2" fill="#239E93"/><circle cx="1427.4" cy="593.3" r="10.0" fill="#239E93"/><circle cx="1413.6" cy="580.2" r="9.2" fill="#239E93"/><circle cx="1422.8" cy="581.7" r="8.5" fill="#239E93"/><ellipse cx="761" cy="686" rx="528" ry="17" fill="#FFFFFF" opacity="0.10"/><path d="M0,900 L0,779.9 L40,777.3 L80,773.2 L120,768.1 L160,762.5 L200,756.9 L240,751.9 L280,747.8 L320,744.8 L360,743.1 L400,742.5 L440,742.7 L480,743.5 L520,744.4 L560,744.8 L600,744.4 L640,742.7 L680,739.6 L720,734.9 L760,728.6 L800,721.0 L840,712.4 L880,703.5 L920,694.7 L960,686.7 L1000,680.0 L1040,675.1 L1080,672.4 L1120,672.2 L1160,674.4 L1200,678.8 L1240,685.1 L1280,692.9 L1320,701.6 L1360,710.6 L1400,719.2 L1440,727.1 L1440,900 Z" fill="#0F7A74" opacity="0.92"/><rect x="69.6" y="764.4" width="5.2" height="11.7" fill="#0F7A74"/><polygon points="72.2,735.1 56.9,773.6 87.4,773.6" fill="#0F7A74"/><polygon points="72.2,711.3 60.6,749.8 83.8,749.8" fill="#0F7A74"/><polygon points="72.2,687.5 64.2,726.0 80.1,726.0" fill="#0F7A74"/><rect x="122.7" y="757.8" width="5.1" height="11.5" fill="#0F7A74"/><polygon points="125.3,729.0 110.3,766.8 140.3,766.8" fill="#0F7A74"/><polygon points="125.3,705.6 113.9,743.4 136.7,743.4" fill="#0F7A74"/><polygon points="125.3,682.2 117.5,720.0 133.1,720.0" fill="#0F7A74"/><rect x="178.1" y="742.1" width="6.3" height="19.4" fill="#0F7A74"/><circle cx="181.2" cy="700.8" r="20.6" fill="#0F7A74"/><circle cx="165.4" cy="712.9" r="14.6" fill="#0F7A74"/><circle cx="197.0" cy="711.7" r="15.8" fill="#0F7A74"/><circle cx="175.2" cy="691.1" r="14.6" fill="#0F7A74"/><circle cx="189.7" cy="693.5" r="13.4" fill="#0F7A74"/><rect x="184.2" y="750.4" width="4.6" height="10.4" fill="#0F7A74"/><polygon points="186.5,724.4 173.0,758.5 200.0,758.5" fill="#0F7A74"/><polygon points="186.5,703.3 176.2,737.4 196.8,737.4" fill="#0F7A74"/><polygon points="186.5,682.2 179.5,716.3 193.6,716.3" fill="#0F7A74"/><rect x="299.0" y="727.0" width="6.8" height="21.0" fill="#0F7A74"/><circle cx="302.4" cy="682.5" r="22.3" fill="#0F7A74"/><circle cx="285.4" cy="695.6" r="15.7" fill="#0F7A74"/><circle cx="319.5" cy="694.3" r="17.0" fill="#0F7A74"/><circle cx="295.9" cy="672.0" r="15.7" fill="#0F7A74"/><circle cx="311.6" cy="674.6" r="14.4" fill="#0F7A74"/><rect x="314.6" y="738.2" width="3.9" height="8.8" fill="#0F7A74"/><polygon points="316.6,716.2 305.1,745.1 328.1,745.1" fill="#0F7A74"/><polygon points="316.6,698.3 307.9,727.2 325.3,727.2" fill="#0F7A74"/><polygon points="316.6,680.3 310.6,709.3 322.6,709.3" fill="#0F7A74"/><rect x="437.4" y="726.5" width="5.9" height="18.2" fill="#0F7A74"/><circle cx="440.3" cy="687.8" r="19.4" fill="#0F7A74"/><circle cx="425.5" cy="699.2" r="13.7" fill="#0F7A74"/><circle cx="455.1" cy="698.1" r="14.8" fill="#0F7A74"/><circle cx="434.6" cy="678.7" r="13.7" fill="#0F7A74"/><circle cx="448.3" cy="681.0" r="12.5" fill="#0F7A74"/><rect x="561.6" y="735.8" width="4.8" height="11.0" fill="#0F7A74"/><polygon points="564.0,708.5 549.8,744.4 578.3,744.4" fill="#0F7A74"/><polygon points="564.0,686.3 553.2,722.2 574.9,722.2" fill="#0F7A74"/><polygon points="564.0,664.0 556.6,699.9 571.4,699.9" fill="#0F7A74"/><rect x="634.5" y="734.2" width="4.7" height="10.8" fill="#0F7A74"/><polygon points="636.8,707.3 622.9,742.6 650.8,742.6" fill="#0F7A74"/><polygon points="636.8,685.5 626.2,720.8 647.5,720.8" fill="#0F7A74"/><polygon points="636.8,663.7 629.6,699.0 644.1,699.0" fill="#0F7A74"/><rect x="712.0" y="729.2" width="3.7" height="8.4" fill="#0F7A74"/><polygon points="713.8,708.2 702.8,735.8 724.8,735.8" fill="#0F7A74"/><polygon points="713.8,691.0 705.5,718.7 722.2,718.7" fill="#0F7A74"/><polygon points="713.8,673.9 708.1,701.6 719.5,701.6" fill="#0F7A74"/><rect x="745.1" y="715.9" width="5.4" height="16.7" fill="#0F7A74"/><circle cx="747.8" cy="680.4" r="17.8" fill="#0F7A74"/><circle cx="734.2" cy="690.9" r="12.5" fill="#0F7A74"/><circle cx="761.4" cy="689.8" r="13.6" fill="#0F7A74"/><circle cx="742.6" cy="672.1" r="12.5" fill="#0F7A74"/><circle cx="755.1" cy="674.1" r="11.5" fill="#0F7A74"/><rect x="758.3" y="721.3" width="4.1" height="9.2" fill="#0F7A74"/><polygon points="760.3,698.2 748.3,728.5 772.3,728.5" fill="#0F7A74"/><polygon points="760.3,679.5 751.2,709.8 769.4,709.8" fill="#0F7A74"/><polygon points="760.3,660.8 754.1,691.0 766.5,691.0" fill="#0F7A74"/><rect x="792.0" y="704.8" width="6.2" height="19.2" fill="#0F7A74"/><circle cx="795.2" cy="663.9" r="20.4" fill="#0F7A74"/><circle cx="779.5" cy="675.9" r="14.4" fill="#0F7A74"/><circle cx="810.8" cy="674.7" r="15.6" fill="#0F7A74"/><circle cx="789.2" cy="654.3" r="14.4" fill="#0F7A74"/><circle cx="803.6" cy="656.7" r="13.2" fill="#0F7A74"/><rect x="1101.2" y="661.0" width="5.7" height="13.0" fill="#0F7A74"/><polygon points="1104.1,628.5 1087.1,671.1 1121.0,671.1" fill="#0F7A74"/><polygon points="1104.1,602.0 1091.2,644.7 1116.9,644.7" fill="#0F7A74"/><polygon points="1104.1,575.6 1095.3,618.3 1112.9,618.3" fill="#0F7A74"/><rect x="1115.8" y="661.2" width="5.7" height="13.0" fill="#0F7A74"/><polygon points="1118.7,628.8 1101.8,671.3 1135.6,671.3" fill="#0F7A74"/><polygon points="1118.7,602.4 1105.8,645.0 1131.5,645.0" fill="#0F7A74"/><polygon points="1118.7,576.1 1109.9,618.6 1127.5,618.6" fill="#0F7A74"/><rect x="1227.9" y="669.2" width="5.3" height="16.2" fill="#0F7A74"/><circle cx="1230.5" cy="634.8" r="17.2" fill="#0F7A74"/><circle cx="1217.4" cy="644.9" r="12.2" fill="#0F7A74"/><circle cx="1243.7" cy="643.9" r="13.2" fill="#0F7A74"/><circle cx="1225.5" cy="626.7" r="12.2" fill="#0F7A74"/><circle cx="1237.6" cy="628.7" r="11.2" fill="#0F7A74"/><rect x="1228.1" y="666.8" width="6.1" height="18.8" fill="#0F7A74"/><circle cx="1231.2" cy="626.8" r="20.0" fill="#0F7A74"/><circle cx="1215.9" cy="638.6" r="14.1" fill="#0F7A74"/><circle cx="1246.4" cy="637.4" r="15.3" fill="#0F7A74"/><circle cx="1225.3" cy="617.4" r="14.1" fill="#0F7A74"/><circle cx="1239.4" cy="619.8" r="12.9" fill="#0F7A74"/><rect x="1381.2" y="698.3" width="6.4" height="19.7" fill="#0F7A74"/><circle cx="1384.4" cy="656.5" r="20.9" fill="#0F7A74"/><circle cx="1368.4" cy="668.8" r="14.8" fill="#0F7A74"/><circle cx="1400.4" cy="667.5" r="16.0" fill="#0F7A74"/><circle cx="1378.2" cy="646.6" r="14.8" fill="#0F7A74"/><circle cx="1393.0" cy="649.1" r="13.5" fill="#0F7A74"/><ellipse cx="724" cy="776" rx="418" ry="17" fill="#FFFFFF" opacity="0.10"/><path d="M0,900 L0,779.7 L40,772.7 L80,766.1 L120,760.6 L160,756.7 L200,754.9 L240,755.6 L280,758.9 L320,764.7 L360,772.8 L400,782.8 L440,794.1 L480,805.9 L520,817.7 L560,828.7 L600,838.4 L640,846.1 L680,851.8 L720,855.2 L760,856.5 L800,856.0 L840,854.0 L880,851.1 L920,847.9 L960,844.9 L1000,842.6 L1040,841.2 L1080,841.0 L1120,842.1 L1160,844.1 L1200,846.7 L1240,849.6 L1280,852.2 L1320,853.8 L1360,854.1 L1400,852.5 L1440,848.8 L1440,900 Z" fill="#074F57" opacity="1"/><rect x="313.3" y="751.7" width="6.3" height="14.4" fill="#074F57"/><polygon points="316.5,715.7 297.7,762.9 335.2,762.9" fill="#074F57"/><polygon points="316.5,686.4 302.2,733.7 330.7,733.7" fill="#074F57"/><polygon points="316.5,657.2 306.7,704.4 326.2,704.4" fill="#074F57"/><rect x="431.5" y="770.4" width="7.9" height="24.3" fill="#074F57"/><circle cx="435.5" cy="718.7" r="25.8" fill="#074F57"/><circle cx="415.7" cy="733.9" r="18.2" fill="#074F57"/><circle cx="455.2" cy="732.4" r="19.8" fill="#074F57"/><circle cx="427.9" cy="706.6" r="18.2" fill="#074F57"/><circle cx="446.1" cy="709.6" r="16.7" fill="#074F57"/><rect x="599.2" y="824.0" width="7.5" height="17.0" fill="#074F57"/><polygon points="602.9,781.7 580.8,837.3 625.0,837.3" fill="#074F57"/><polygon points="602.9,747.2 586.1,802.8 619.7,802.8" fill="#074F57"/><polygon points="602.9,712.8 591.4,768.4 614.4,768.4" fill="#074F57"/><rect x="634.0" y="829.3" width="8.2" height="18.5" fill="#074F57"/><polygon points="638.1,783.0 614.0,843.7 662.2,843.7" fill="#074F57"/><polygon points="638.1,745.4 619.8,806.1 656.4,806.1" fill="#074F57"/><polygon points="638.1,707.8 625.5,768.5 650.6,768.5" fill="#074F57"/><rect x="818.4" y="830.7" width="8.5" height="26.3" fill="#074F57"/><circle cx="822.7" cy="774.9" r="27.9" fill="#074F57"/><circle cx="801.3" cy="791.3" r="19.7" fill="#074F57"/><circle cx="844.0" cy="789.7" r="21.4" fill="#074F57"/><circle cx="814.5" cy="761.7" r="19.7" fill="#074F57"/><circle cx="834.2" cy="765.0" r="18.1" fill="#074F57"/><rect x="835.6" y="831.7" width="7.9" height="24.4" fill="#074F57"/><circle cx="839.6" cy="779.8" r="25.9" fill="#074F57"/><circle cx="819.8" cy="795.1" r="18.3" fill="#074F57"/><circle cx="859.4" cy="793.6" r="19.8" fill="#074F57"/><circle cx="832.0" cy="767.7" r="18.3" fill="#074F57"/><circle cx="850.2" cy="770.7" r="16.8" fill="#074F57"/><rect x="866.4" y="829.6" width="7.9" height="24.3" fill="#074F57"/><circle cx="870.3" cy="778.1" r="25.8" fill="#074F57"/><circle cx="850.6" cy="793.2" r="18.2" fill="#074F57"/><circle cx="890.0" cy="791.7" r="19.7" fill="#074F57"/><circle cx="862.8" cy="766.0" r="18.2" fill="#074F57"/><circle cx="880.9" cy="769.0" r="16.7" fill="#074F57"/><rect x="980.3" y="819.1" width="8.5" height="26.3" fill="#074F57"/><circle cx="984.6" cy="763.2" r="27.9" fill="#074F57"/><circle cx="963.2" cy="779.6" r="19.7" fill="#074F57"/><circle cx="1006.0" cy="778.0" r="21.4" fill="#074F57"/><circle cx="976.4" cy="750.0" r="19.7" fill="#074F57"/><circle cx="996.1" cy="753.3" r="18.1" fill="#074F57"/><rect x="1120.9" y="827.2" width="7.5" height="17.0" fill="#074F57"/><polygon points="1124.7,784.7 1102.5,840.5 1146.8,840.5" fill="#074F57"/><polygon points="1124.7,750.1 1107.8,805.9 1141.5,805.9" fill="#074F57"/><polygon points="1124.7,715.5 1113.1,771.4 1136.2,771.4" fill="#074F57"/><rect x="1130.9" y="832.2" width="5.5" height="12.4" fill="#074F57"/><polygon points="1133.7,801.3 1117.5,841.9 1149.8,841.9" fill="#074F57"/><polygon points="1133.7,776.1 1121.4,816.8 1145.9,816.8" fill="#074F57"/><polygon points="1133.7,750.9 1125.3,791.6 1142.1,791.6" fill="#074F57"/><rect x="1173.9" y="823.6" width="7.7" height="23.6" fill="#074F57"/><circle cx="1177.8" cy="773.5" r="25.1" fill="#074F57"/><circle cx="1158.6" cy="788.2" r="17.7" fill="#074F57"/><circle cx="1196.9" cy="786.8" r="19.2" fill="#074F57"/><circle cx="1170.4" cy="761.7" r="17.7" fill="#074F57"/><circle cx="1188.1" cy="764.6" r="16.2" fill="#074F57"/><rect x="1315.0" y="831.8" width="7.8" height="24.0" fill="#074F57"/><circle cx="1318.9" cy="780.8" r="25.5" fill="#074F57"/><circle cx="1299.5" cy="795.8" r="18.0" fill="#074F57"/><circle cx="1338.4" cy="794.3" r="19.5" fill="#074F57"/><circle cx="1311.4" cy="768.8" r="18.0" fill="#074F57"/><circle cx="1329.4" cy="771.8" r="16.5" fill="#074F57"/><rect x="1335.7" y="829.2" width="8.8" height="27.0" fill="#074F57"/><circle cx="1340.1" cy="771.8" r="28.7" fill="#074F57"/><circle cx="1318.2" cy="788.7" r="20.2" fill="#074F57"/><circle cx="1362.0" cy="787.0" r="21.9" fill="#074F57"/><circle cx="1331.7" cy="758.3" r="20.2" fill="#074F57"/><circle cx="1351.9" cy="761.7" r="18.6" fill="#074F57"/><rect x="1361.4" y="835.9" width="6.5" height="20.1" fill="#074F57"/><circle cx="1364.6" cy="793.1" r="21.4" fill="#074F57"/><circle cx="1348.3" cy="805.6" r="15.1" fill="#074F57"/><circle cx="1381.0" cy="804.4" r="16.4" fill="#074F57"/><circle cx="1358.3" cy="783.0" r="15.1" fill="#074F57"/><circle cx="1373.5" cy="785.5" r="13.8" fill="#074F57"/></svg>
+  <div class="wrap hero-inner">
+    <span class="eyebrow">デザインエンジニア ／ 奈良</span>
+    <h1>デザインを、<br><span class="hl">仕組み</span>から作る。</h1>
+    <p class="hero-sub">
+      印刷物デザイン16年の現場で培った「再現できる craft」を、そのまま設計にしています。
+      チラシ・パンフレットのDTPから、Webデザイン、ブラウザで実際に触れるインタラクティブなツールまで。
+      「いつもの品質」をいつでも出せる、仕組みとしてのデザインをお届けします。
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#works">作品を見る</a>
+      <a class="btn btn-ghost" href="#contact">仕事の相談をする</a>
+    </div>
+    <div class="badges">
+      <span class="hot">全作品、スマホ1台で開発</span>
+      <span>完全リモート対応</span>
+      <span>DTP歴16年</span>
+      <span>ライブラリ非依存</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ================= SERVICES ================= -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">SERVICES</span><h2>できること</h2></div>
+    <p class="sec-lead">単品のご依頼から、継続のパートナー契約まで。すべて完全リモート、連絡はチャット中心で迅速に対応します。</p>
+    <div class="svc-grid">
+      <div class="svc"><span class="no">01</span><h3>印刷物デザイン（DTP）</h3><p>チラシ・パンフレット・冊子・カタログなど。企画とレイアウトから、印刷入稿用データの作成まで一貫して対応します。DTP歴16年、入稿事故のないデータ作りが強みです。</p></div>
+      <div class="svc"><span class="no">02</span><h3>Webデザイン・コーディング</h3><p>WebサイトやLPのデザインと、HTML / CSS / JavaScript による実装。デザインだけ、実装だけのご依頼も可能です。スマホ表示まで丁寧に作ります。</p></div>
+      <div class="svc"><span class="no">03</span><h3>インタラクティブ・Webツール開発</h3><p>Canvas / WebGL を使った「触って楽しい」演出や、業務を軽くするブラウザツール。ライブラリに頼らない自作エンジンで、軽くて長持ちする実装をします。</p></div>
+      <div class="svc"><span class="no">04</span><h3>文章・編集・校正</h3><p>記事や原稿の推敲、構成の改善、誤字脱字のチェック。エッセイやブログの執筆実績もあり、「読み手が疲れない文章」を意識して整えます。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WORKS ================= -->
+<section id="works">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">WORKS</span><h2>作品 — すべて実際に触れます</h2></div>
+    <p class="sec-lead">モックアップでも動画でもなく、今このブラウザで動く本物のツールです。私の仕事の進め方そのもの——「仕組みを作って、誰でも同じ品質を再現できるようにする」——の実例としてご覧ください。</p>
+    <div class="grid">
+
+      <article class="card">
+        <a class="shot" href="../glass-jelly-card.html"><img src="../img/jellycard.jpg" alt="Glass Jelly Card — 触ると波打つすりガラスのカード" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Glass Jelly Card</h3><span class="kind">WEBGL2 / RAYMARCHING</span></div>
+          <p class="punch">画面は、やわらかくなれるか。</p>
+          <p class="desc">WebGL2 のレイマーチングで描いた、すりガラスのカード。触ると波紋が表面の形そのものを変形させ、屈折が波に連れて揺れます。Webサイトの「触り心地」の演出として応用できる技術です。</p>
+          <div class="card-links"><a href="../glass-jelly-card.html">触ってみる →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://pachi-eta.vercel.app"><img src="../img/gekiatsu.jpg" alt="激アツ文字工房 — パチンコ風の派手な文字を生成するツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>激アツ文字工房</h3><span class="kind">CANVAS 2D / DISTANCE TRANSFORM</span></div>
+          <p class="punch">パチンコ級の「激アツ文字」を、誰でも。</p>
+          <p class="desc">ベベルや金属質感、発光まで Photoshop 級のレイヤースタイルを Canvas で計算する文字生成ツール。職人の暗黙知だった技法を、約100個のパラメータとして誰でも再現できる形に codify しました。配信タイトルやサムネイル制作にも。</p>
+          <div class="card-links"><a href="https://pachi-eta.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://grafla.vercel.app"><img src="../img/grafla.jpg" alt="Grafla — メッシュグラデーション生成ツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Grafla</h3><span class="kind">GRADIENT ENGINE</span></div>
+          <p class="punch">グラデーションは「計算」で作る。</p>
+          <p class="desc">メッシュグラデーションの生成ツール。アニメーションする CSS の書き出しや、画像からの色抽出にも対応。フィルターをかけるのではなく、操れる「面」としてグラデーションを設計しています。</p>
+          <div class="card-links"><a href="https://grafla.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://tensec-iota.vercel.app"><img src="../img/tensec.jpg" alt="10sec — モーフィング対応のキーフレームアニメーションツール" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>10sec</h3><span class="kind">ANIMATION / MORPHING</span></div>
+          <p class="punch">10秒アニメーション・メーカー。</p>
+          <p class="desc">画像モーフィング対応のキーフレームエディタ。GIF・連番PNG・MP4/WebM への書き出しまでブラウザで完結します。編集と書き出しが同じ状態モデルを共有するので、「見たまま」がそのまま納品物になります。</p>
+          <div class="card-links"><a href="https://tensec-iota.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://parsstudio.vercel.app"><img src="../img/pars.jpg" alt="PARS STUDIO — 画像仕上げスイート" width="1120" height="787" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>PARS STUDIO</h3><span class="kind">CANVAS 2D / IMAGE ALGORITHMS</span></div>
+          <p class="punch">画像の「最後のひと手間」を速く。</p>
+          <p class="desc">切り抜き・色・光・ボードレイアウトの4工程をまとめた画像仕上げスイート。建築ビジュアルの実務から生まれた、地味だけど毎日効く道具です。</p>
+          <div class="card-links"><a href="https://parsstudio.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://emojichat.vercel.app"><img src="../img/emojichat.jpg" alt="えもじチャット — ぷっくりツヤツヤの文字で話すチャット" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>えもじチャット</h3><span class="kind">CANVAS / PLAYFUL UI</span></div>
+          <p class="punch">ぷっくり、ツヤツヤの文字でおしゃべり。</p>
+          <p class="desc">2歳の姪との共同開発。スマホで遊びたいと言うので、普通の文章が「触りたくなるステッカー」に変わるチャットを作りました。むずかしい技術を、楽しい顔で届ける練習です。</p>
+          <div class="card-links"><a href="https://emojichat.vercel.app">ツールを開く →</a></div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="num">6×</div><div class="lbl">ECサイトの月商を2ヶ月で改善（約5万円 → 約30万円）。SEOとUI全面刷新、自作の受注アプリが効きました</div></div>
+      <div class="metric"><div class="num">16年</div><div class="lbl">デザインと印刷の現場。DTP、縦組み、入稿自動化まで</div></div>
+      <div class="metric"><div class="num">約100</div><div class="lbl">1つのツールに開いたパラメータの数。すべてシードから同じ結果を再現できます</div></div>
+      <div class="metric"><div class="num">1台</div><div class="lbl">このページの全エンジンは、スマートフォン1台で設計・開発されました</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">PROCESS</span><h2>仕事の進め方</h2></div>
+    <p class="sec-lead">完全リモート・全国対応。対面の打ち合わせがなくても困らないよう、進め方を決めています。</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><h3>ご相談・ヒアリング</h3><p>下のフォームかチャットで、作りたいものと期限をお聞かせください。ざっくりした相談の段階でも大丈夫です。</p></div>
+      <div class="step"><span class="n">2</span><h3>ご提案・お見積もり</h3><p>進め方と金額を先に明示します。「何にいくらかかるか」が分からない状態で始めることはしません。</p></div>
+      <div class="step"><span class="n">3</span><h3>制作（途中確認あり）</h3><p>節目ごとに確認いただきながら進めます。方向がズレたまま完成、という事故を防ぎます。</p></div>
+      <div class="step"><span class="n">4</span><h3>納品・修正対応</h3><p>データ一式を納品。使い方のメモも添えます。納品後の軽微な修正にも柔軟に対応します。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">ABOUT</span><h2>仕事への考え方</h2></div>
+    <p class="sec-lead">私の専門は「手続き的設計」——工程を再現できるところまで分解して、仕組みにすること。目的はいつも同じで、使う人が疲れない道具を作ることです。</p>
+    <blockquote class="motto"><span class="my">MY MOTTO</span>人が気持ちよく使える道具を作ること。美しい色、直感的な操作、気持ちのよい動き、そしてなによりも、疲れにくさ。</blockquote>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>デザインシステム自体を、道具にする</h3>
+        <p>デザインの約束事は、守る人の注意力に頼るほど漏れていきます。私は約束事そのものを「実行できる道具」に変えます。パラメータが、毎回同じ結果を保証するからです。</p>
+        <p>その再現性は「床」。天井は人の自由です。すべてのパラメータは上書きできるままにしておく——システムの確実さのために、人の自由度は削りません。</p>
+      </div>
+      <div class="about-card">
+        <h3>AIに実装させ、判断は自分で持つ</h3>
+        <p>AIエージェントを実装のリソースとして指揮し、成果物はすべて自分で読んで判断してから出します。「説明できないものは出さない」が私のルールです。</p>
+        <p>AIが速くするのは手であって、判断ではありません。1人とスマホ1台と電車の移動時間で、このページの全エンジンが生まれました。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <span class="sec-tag" style="color:#A9F0D8">CONTACT</span>
+      <h2>お仕事のご相談</h2>
+      <p>奈良県在住。完全リモートで全国対応します。印刷物、Web、ツールのこと——「こんなの作れる？」という段階の相談からどうぞ。</p>
+      <p style="margin-top:10px;font-size:14px;opacity:.85">活動名義は <b>KAMAL</b> です。本名はご契約の段階でお伝えします。</p>
+      <p class="gh-line"><a href="https://github.com/60mm60-ops" target="_blank" rel="noopener">GitHub — github.com/60mm60-ops →</a></p>
+      <form class="contact-form" action="https://formsubmit.co/04926de566687229ff7b33be185d9093" method="POST">
+        <input type="hidden" name="_subject" value="ポートフォリオ（日本語版）からのお問い合わせ">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://kamal-portfolio-amber.vercel.app/ja?sent=1#contact">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <label>
+          <span>お名前</span>
+          <input type="text" name="name" autocomplete="name">
+        </label>
+        <label>
+          <span>メールアドレス<em class="req">必須</em></span>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="reply@example.com">
+        </label>
+        <label>
+          <span>ご相談内容<em class="req">必須</em></span>
+          <textarea name="message" rows="5" required placeholder="作りたいもの、困っていること、ご希望の期限など"></textarea>
+        </label>
+        <button type="submit" class="send">送信する</button>
+      </form>
+      <div class="sent-note" id="sentNote" hidden>
+        <p class="big">ありがとうございます。送信できました。</p>
+        <p>いただいたメールアドレスへ返信します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">KAMAL — NARA, JAPAN</p>
+    <p style="margin-top:6px">このページの作品は、すべてブラウザでそのまま動きます。インストールも登録もいりません。触ってみてください。</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  /* fireflies over the forest */
+  const hero = document.querySelector('.hero');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (hero && !reduced) {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 22; i++) {
+      const f = document.createElement('span');
+      f.className = 'firefly';
+      const s = 3 + rnd() * 4;
+      f.style.width = f.style.height = s.toFixed(1) + 'px';
+      f.style.left = (rnd() * 96).toFixed(1) + '%';
+      f.style.top = (18 + rnd() * 62).toFixed(1) + '%';
+      f.style.animationDuration = (5 + rnd() * 7).toFixed(1) + 's';
+      f.style.animationDelay = (-rnd() * 8).toFixed(1) + 's';
+      hero.appendChild(f);
+    }
+  }
+  /* sent note */
+  if (new URLSearchParams(location.search).get('sent') === '1') {
+    const note = document.getElementById('sentNote');
+    const form = document.querySelector('.contact-form');
+    if (note && form) { form.hidden = true; note.hidden = false; }
+  }
+})();
+</script>
+</body>
+</html>
