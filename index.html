@@ -212,6 +212,20 @@
 .sent-note{border:1px solid rgba(255,255,255,.45);border-radius:16px;padding:22px 22px 24px;margin:26px auto 0;max-width:36em;text-align:left}
 .sent-note .big{color:#fff;font-weight:700;font-size:1.15rem;margin-bottom:.5em}
 .sent-note p{color:rgba(255,255,255,.9);margin:0 auto}
+
+/* ===== added 2026-11-14: case study + print record ===== */
+.case{margin:44px auto 0;max-width:880px;background:#fff;border:1px solid #E4DFD2;border-radius:16px;padding:30px 32px;text-align:left}
+.case .case-tag{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.18em;color:#B4552D;font-weight:600}
+.case h3{font-size:22px;margin:8px 0 14px;line-height:1.5}
+.case dl{display:grid;grid-template-columns:110px 1fr;gap:10px 18px;font-size:15px;line-height:1.8;margin:0}
+.case dt{font-weight:700;color:#8A6D4F}
+.case dd{margin:0}
+.print-list{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;margin-top:8px}
+.print-item{background:#fff;border:1px solid #E4DFD2;border-radius:14px;padding:20px 22px}
+.print-item h3{font-size:17px;margin:0 0 8px}
+.print-item p{font-size:14.5px;line-height:1.8;margin:0}
+.print-scope{margin-top:20px;font-size:15px;line-height:1.9;background:#FBF6EA;border:1px dashed #D8C9A3;border-radius:14px;padding:18px 22px}
+@media(max-width:720px){.print-list{grid-template-columns:1fr}.case dl{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -336,6 +350,10 @@
 
     <div class="grid">
 
+      
+      
+      
+
       <article class="card featured">
         <a class="shot live-shot" href="glass-jelly-card.html"><img src="img/jellycard.jpg" alt="Glass Jelly Card — frosted glass that ripples under touch" width="1120" height="752" loading="lazy" decoding="async"><iframe class="live-frame" data-src="glass-jelly-card.html?embed=1" title="Glass Jelly Card — live miniature" aria-hidden="true" tabindex="-1" scrolling="no"></iframe><span class="live-badge">&#9679; LIVE &middot; THE REAL APP</span></a>
         <div class="card-body">
@@ -408,7 +426,63 @@
           <div class="card-links"><a href="https://emojichat.vercel.app">Open the tool &rarr;</a></div>
         </div>
       </article>
-      <article class="card featured">
+      <article class="card">
+        <a class="shot" href="https://cooking-ivory.vercel.app"><img src="img/cooking.jpg" alt="Recipe Step Timer — a timer that follows the steps of a recipe" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Recipe Step Timer</h3><span class="kind">KITCHEN / STEP TIMER</span></div>
+          <p class="punch">A sous-chef for your timeline.</p>
+          <p class="desc">A step-by-step timer for recipes. It carries "what comes next" and "how long is left" at the same time, so nothing burns while your hands are busy.</p>
+          <p class="engine"><b>ENGINE:</b> parallel step scheduling &middot; glanceable progress rings</p>
+          <div class="card-links"><a href="https://cooking-ivory.vercel.app">Open the tool &rarr;</a></div>
+        </div>
+      </article>
+
+      
+      <article class="card">
+        <a class="shot" href="https://colorfla.vercel.app"><img src="img/colorfla.jpg" alt="Colorfla — a colour palette generator" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Colorfla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
+          <p class="punch">Palettes by relation, not by luck.</p>
+          <p class="desc">A colour-palette generator that computes the relationships between colours — the colour counterpart to Grafla's gradient engine, and a working starting point for real design jobs.</p>
+          <p class="engine"><b>ENGINE:</b> colour-relation solver &middot; harmony rules as open parameters</p>
+          <div class="card-links"><a href="https://colorfla.vercel.app">Open the tool &rarr;</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://colorfla-au5j.vercel.app"><img src="img/connefla.jpg" alt="Connefla — a palette generator that computes how colours connect" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Connefla</h3><span class="kind">COLOR / PALETTE ENGINE</span></div>
+          <p class="punch">Palettes by connection, not by single colours.</p>
+          <p class="desc">A member of the "fla" series, Grafla's siblings. It builds palettes from the relationships between colours placed side by side — the next colour drawn by structure, not by hunch.</p>
+          <p class="engine"><b>ENGINE:</b> colour-connection solver &middot; single-file generator</p>
+          <div class="card-links"><a href="https://colorfla-au5j.vercel.app">Open the tool &rarr;</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://minfla.vercel.app"><img src="img/minfla.jpg" alt="Minfla — a generator that draws colours in the act of blending" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Minfla</h3><span class="kind">GRADIENT / MINGLE</span></div>
+          <p class="punch">Drawing colours mid-blend.</p>
+          <p class="desc">Mingle Flash, another of the "fla" series: a single-file gradient engine that generates the process of colours mixing, not just the result — the pleasure of the blend itself, exportable as-is.</p>
+          <p class="engine"><b>ENGINE:</b> blend-field generator &middot; single-file, no dependencies</p>
+          <div class="card-links"><a href="https://minfla.vercel.app">Open the tool &rarr;</a></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="shot" href="https://swifla.vercel.app"><img src="img/swifla.jpg" alt="Swifla — a generator for switching colours" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <div class="card-body">
+          <div class="card-top"><h3>Swifla</h3><span class="kind">GRADIENT / SWITCH</span></div>
+          <p class="punch">The pleasure of a colour switching.</p>
+          <p class="desc">Switch Flash, from the same "fla" laboratory as Grafla, Colorfla, Connefla and Minfla: a single-file engine that generates colour transitions and the snap of the switch between them.</p>
+          <p class="engine"><b>ENGINE:</b> transition-field generator &middot; single-file, no dependencies</p>
+          <div class="card-links"><a href="https://swifla.vercel.app">Open the tool &rarr;</a></div>
+        </div>
+      </article>
+
+<article class="card featured">
         <div class="shot"><svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram: isometric projection of rule-placed boxes" style="display:block;width:100%;height:100%;background:#FBF3E6"><polygon points="330.0,157.7 661.5,246.5 415.0,312.5 83.5,223.7" fill="#F3E5CE"/><line x1="338.5" y1="159.9" x2="92.0" y2="226.0" stroke="#E3CFA9" stroke-width="1"/><line x1="381.0" y1="171.3" x2="134.5" y2="237.4" stroke="#E3CFA9" stroke-width="1"/><line x1="423.5" y1="182.7" x2="177.0" y2="248.8" stroke="#E3CFA9" stroke-width="1"/><line x1="466.0" y1="194.1" x2="219.5" y2="260.2" stroke="#E3CFA9" stroke-width="1"/><line x1="508.5" y1="205.5" x2="262.0" y2="271.5" stroke="#E3CFA9" stroke-width="1"/><line x1="551.0" y1="216.9" x2="304.5" y2="282.9" stroke="#E3CFA9" stroke-width="1"/><line x1="593.5" y1="228.3" x2="347.0" y2="294.3" stroke="#E3CFA9" stroke-width="1"/><line x1="636.0" y1="239.7" x2="389.5" y2="305.7" stroke="#E3CFA9" stroke-width="1"/><line x1="321.5" y1="159.9" x2="653.0" y2="248.8" stroke="#E3CFA9" stroke-width="1"/><line x1="279.0" y1="171.3" x2="610.5" y2="260.2" stroke="#E3CFA9" stroke-width="1"/><line x1="236.5" y1="182.7" x2="568.0" y2="271.5" stroke="#E3CFA9" stroke-width="1"/><line x1="194.0" y1="194.1" x2="525.5" y2="282.9" stroke="#E3CFA9" stroke-width="1"/><line x1="151.5" y1="205.5" x2="483.0" y2="294.3" stroke="#E3CFA9" stroke-width="1"/><line x1="109.0" y1="216.9" x2="440.5" y2="305.7" stroke="#E3CFA9" stroke-width="1"/><polygon points="330.0,189.6 415.0,212.3 330.0,235.1 245.0,212.3" fill="none" stroke="#B08968" stroke-width="1.8" stroke-dasharray="7 5" opacity="0.9"/><polygon points="457.5,228.3 525.5,246.5 444.8,268.1 376.8,249.9" fill="none" stroke="#B08968" stroke-width="1.8" stroke-dasharray="7 5" opacity="0.9"/><polygon points="364.0,262.4 427.8,279.5 381.0,292.0 317.2,275.0" fill="none" stroke="#B08968" stroke-width="1.8" stroke-dasharray="7 5" opacity="0.9"/><polygon points="245.0,212.3 330.0,235.1 330.0,186.7 245.0,163.9" fill="#D1775F"/><polygon points="415.0,212.3 330.0,235.1 330.0,186.7 415.0,163.9" fill="#AE5643"/><polygon points="330.0,141.2 415.0,163.9 330.0,186.7 245.0,163.9" fill="#EFC3B2"/><polygon points="279.0,163.9 330.0,177.6 330.0,142.4 279.0,128.7" fill="#E2B182"/><polygon points="381.0,163.9 330.0,177.6 330.0,142.4 381.0,128.7" fill="#CD9765"/><polygon points="330.0,115.1 381.0,128.7 330.0,142.4 279.0,128.7" fill="#F7E7C3"/><polygon points="376.8,249.9 444.8,268.1 444.8,175.7 376.8,157.5" fill="#D9B98A"/><polygon points="525.5,246.5 444.8,268.1 444.8,175.7 525.5,154.1" fill="#BE9A68"/><polygon points="457.5,135.9 525.5,154.1 444.8,175.7 376.8,157.5" fill="#F5E3C2"/><polygon points="317.2,275.0 381.0,292.0 381.0,252.4 317.2,235.4" fill="#B98AA5"/><polygon points="427.8,279.5 381.0,292.0 381.0,252.4 427.8,239.9" fill="#9C6E88"/><polygon points="364.0,222.8 427.8,239.9 381.0,252.4 317.2,235.4" fill="#D9B7CB"/><line x1="330.0" y1="162.2" x2="423.5" y2="187.3" stroke="#E8497F" stroke-width="2.6"/><text x="434.1268040739616" y="197.1246170930299" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#E8497F">x</text><line x1="330.0" y1="162.2" x2="236.5" y2="187.3" stroke="#2E8C83" stroke-width="2.6"/><text x="215.87319592603842" y="208.1246170930299" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#2E8C83">y</text><line x1="330.0" y1="162.2" x2="330.0" y2="87.4" stroke="#26222E" stroke-width="2.6"/><text x="323.0" y="75.42392403097817" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#26222E">z</text><text x="36" y="356" font-family="JetBrains Mono, monospace" font-size="14.5" fill="#8A6D4F">stacked box = grounded on the box below</text><text x="428" y="356" font-family="JetBrains Mono, monospace" font-size="14.5" fill="#8A6D4F">dashed = footprint, grounded</text></svg></div>
         <div class="card-body">
           <div class="card-top"><h3>The Hero City</h3><span class="kind">SVG / PROCEDURAL CITY</span></div>
@@ -433,10 +507,36 @@
       <div class="metric"><div class="num">~100</div><div class="lbl">Open parameters in a single tool — every one reproducible from a seed</div></div>
       <div class="metric"><div class="num">1 phone</div><div class="lbl">Every engine on this page was designed and built entirely on a smartphone</div></div>
     </div>
+    <div class="case">
+      <span class="case-tag">CASE STUDY</span>
+      <h3>E-commerce revival — monthly sales &yen;50k &rarr; &yen;300k in two months</h3>
+      <dl>
+        <dt>Problem</dt><dd>The products were fine; the shop was not. Search traffic, product-page presentation, and order-handling overhead were all leaking revenue.</dd>
+        <dt>What I did</dt><dd>A full SEO and UI renewal — every product page's structure, photography and copy reviewed and rebuilt — plus a custom order-management app I built and folded into daily operations.</dd>
+        <dt>Result</dt><dd>Monthly sales grew roughly 6&times; in two months. Being able to touch both the design and the system underneath is what made it work.</dd>
+      </dl>
+    </div>
+    <p style="text-align:center;margin-top:26px;font-size:15px">More engines and experiments — 20 repositories in total — on <a href="https://github.com/60mm60-ops">GitHub</a>.</p>
   </div>
 </section>
 
 <!-- ================= ABOUT ================= -->
+
+<!-- ================= PRINT RECORD ================= -->
+<section id="print">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">PRINT / DTP</span><h2>Print &amp; DTP track record</h2></div>
+    <p class="sec-lead">Employer and client work is under NDA, so the pieces themselves can't be shown. What can be shown is the territory — sixteen years of print production, described plainly.</p>
+    <div class="print-list">
+      <div class="print-item"><h3>E-commerce</h3><p>Product catalogues, sales flyers, package inserts, campaign print. My specialty is promotional print that has to pay for itself in sales.</p></div>
+      <div class="print-item"><h3>Advertising &amp; promotion</h3><p>DTP production inside an ad agency: flyers, magazine ads, layouts matched to each medium, and press-ready data that goes out clean.</p></div>
+      <div class="print-item"><h3>Publishing &amp; editorial</h3><p>Magazine and book typesetting, and a commercially published comic essay of my own. Comfortable with vertical Japanese text and long multi-page works.</p></div>
+      <div class="print-item"><h3>Business &amp; retail</h3><p>Company brochures, pamphlets, store flyers — starting from who it is for and what it has to say, not from decoration.</p></div>
+    </div>
+    <p class="print-scope">Scope: concept &amp; structure &rarr; design &rarr; colour proofing &rarr; press-ready data (Illustrator / InDesign, print PDF). I also build prepress automation scripts. Sixteen years of data that goes to print without accidents is the headline.</p>
+  </div>
+</section>
+
 <section id="about">
   <div class="wrap">
     <div class="sec-head"><span class="sec-tag">ABOUT</span><h2>How I work</h2></div>
