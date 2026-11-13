@@ -161,6 +161,12 @@
   .card-links a:hover{text-decoration:underline}
   .card.featured{grid-column:1 / -1}
   .card.featured .shot{aspect-ratio:21/9}
+  .card .shot.live-shot{position:relative}
+  .live-shot img{position:absolute;inset:0}
+  .live-frame{position:absolute;top:0;left:0;border:0;pointer-events:none;opacity:0;transition:opacity .6s ease;transform-origin:0 0}
+  .live-frame.on{opacity:1}
+  .live-badge{position:absolute;top:12px;left:12px;z-index:3;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:#FFF7ED;background:rgba(64,46,53,.85);padding:5px 10px;border-radius:999px;opacity:0;transition:opacity .6s ease;pointer-events:none}
+  .live-shot .live-frame.on ~ .live-badge{opacity:1}
   @media(max-width:820px){.card.featured .shot{aspect-ratio:16/10}}
 
   /* ---------- metrics ---------- */
@@ -330,7 +336,7 @@
     <div class="grid">
 
       <article class="card featured">
-        <a class="shot" href="glass-jelly-card.html"><img src="img/jellycard.jpg" alt="Glass Jelly Card — frosted glass that ripples under touch" width="1120" height="752" loading="lazy" decoding="async"></a>
+        <a class="shot live-shot" href="glass-jelly-card.html"><img src="img/jellycard.jpg" alt="Glass Jelly Card — frosted glass that ripples under touch" width="1120" height="752" loading="lazy" decoding="async"><iframe class="live-frame" data-src="glass-jelly-card.html?embed=1" title="Glass Jelly Card — live miniature" aria-hidden="true" tabindex="-1" scrolling="no"></iframe><span class="live-badge">&#9679; LIVE &middot; THE REAL APP</span></a>
         <div class="card-body">
           <div class="card-top"><h3>Glass Jelly Card</h3><span class="kind">WEBGL2 / RAYMARCHING</span></div>
           <p class="punch">Can a screen feel soft?</p>
@@ -807,5 +813,40 @@
   });
 })();
 </script>
+<script>
+(function(){
+  var shot = document.querySelector('.live-shot');
+  if (!shot) return;
+  var frame = shot.querySelector('iframe.live-frame');
+  if (!frame) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var VW = 1320, loaded = false, resizeTimer = null;
+  function fit(){
+    var r = shot.getBoundingClientRect();
+    if (!r.width) return;
+    var vh = Math.max(480, Math.min(900, Math.round(VW * r.height / r.width)));
+    frame.style.width = VW + 'px';
+    frame.style.height = vh + 'px';
+    frame.style.transform = 'scale(' + (r.width / VW) + ')';
+  }
+  fit();
+  window.addEventListener('resize', function(){ clearTimeout(resizeTimer); resizeTimer = setTimeout(fit, 150); });
+  function post(msg){ try { frame.contentWindow.postMessage(msg, '*'); } catch (e) {} }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting) {
+        if (!loaded) {
+          loaded = true;
+          fit();
+          frame.addEventListener('load', function(){ setTimeout(function(){ frame.classList.add('on'); }, 800); });
+          frame.src = frame.getAttribute('data-src');
+        } else { post('jelly-resume'); }
+      } else if (loaded) { post('jelly-pause'); }
+    });
+  }, { rootMargin: '200px' });
+  io.observe(shot);
+})();
+</script>
+
 </body>
 </html>

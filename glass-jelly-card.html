@@ -45,6 +45,7 @@
   }
   .poem-gap{height:.9em}
   .ch{display:inline-block}
+  body.embed .cap, body.embed .rain-ui{display:none}
 </style>
 </head>
 <body>
@@ -589,11 +590,22 @@ function spawnRainDrop(){
 }
 const rainSlider = document.getElementById('rain');
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) rainSlider.value = 0;
+const EMBED = new URLSearchParams(location.search).has('embed');
+let embedPaused = false;
+if (EMBED) {
+  document.body.classList.add('embed');
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) rainSlider.value = 55;
+  addEventListener('message', (e) => {
+    if (e.data === 'jelly-pause') embedPaused = true;
+    else if (e.data === 'jelly-resume') embedPaused = false;
+  });
+}
 function applyRain(){ rainAmt = rainSlider.value/100; }
 rainSlider.addEventListener('input', applyRain);
 applyRain();
 
 function frame(){
+  if (embedPaused) { requestAnimationFrame(frame); return; }
   resize();
   const tNow = nowSec();
   const dtF = Math.min(tNow - lastFrameT, 0.05); lastFrameT = tNow;
