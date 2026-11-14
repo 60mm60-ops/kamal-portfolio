@@ -437,11 +437,10 @@
       var dx = p[0]-bx, dy = p[1]-by, d = Math.hypot(dx, dy - 26);
       if(d < 62){
         var f = 1 - d/62, ang = (dx >= 0 ? 1 : -1) * (4 + 10*f);
-        g.style.transformOrigin = bx + 'px ' + by + 'px';
-        g.style.transform = 'scale(2) rotate(' + ang.toFixed(2) + 'deg)';
+        g.setAttribute('transform', 'translate(' + bx + ' ' + by + ') scale(2) rotate(' + ang.toFixed(2) + ') translate(' + (-bx) + ' ' + (-by) + ')');
         if(now - lastLeaf > 90 && Math.random() < 0.5){ lastLeaf = now; for(var li = 0; li < 2; li++) leaf(bx + (Math.random()-0.5)*44, by - 68 - Math.random()*44); }
         clearTimeout(g._petT);
-        g._petT = setTimeout(function(){ g.style.transform = ''; }, 480);
+        g._petT = setTimeout(function(){ g.setAttribute('transform', 'translate(' + bx + ' ' + by + ') scale(2) translate(' + (-bx) + ' ' + (-by) + ')'); }, 480);
       }
     });
   }
