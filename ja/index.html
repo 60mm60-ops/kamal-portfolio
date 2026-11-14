@@ -434,7 +434,7 @@
 
   /* --- petting the trees: sway + leaf sparkles --- */
   var trees = Array.prototype.slice.call(svg.querySelectorAll('g.tree'));
-  trees.forEach(function(g){ g.style.transformBox = 'view-box'; g.style.transition = 'transform .5s cubic-bezier(.34,1.56,.64,1)'; });
+  trees.forEach(function(g){ g._ang = 0; g._tgt = 0; g._hold = 0; g._base = g.getAttribute('transform'); });
   var petting = false, lastLeaf = 0;
   function leaf(x, y){
     var c = document.createElementNS(NS,'circle');
@@ -455,13 +455,23 @@
       var bx = +g.getAttribute('data-bx'), by = +g.getAttribute('data-by');
       var dx = p[0]-bx, dy = p[1]-by, d = Math.hypot(dx, dy - 26);
       if(d < 62){
-        var f = 1 - d/62, ang = (dx >= 0 ? 1 : -1) * (4 + 10*f);
-        g.setAttribute('transform', 'translate(' + bx + ' ' + by + ') scale(2) rotate(' + ang.toFixed(2) + ') translate(' + (-bx) + ' ' + (-by) + ')');
+        var f = 1 - d/62;
+        g._tgt = (dx >= 0 ? 1 : -1) * (4 + 10*f); g._hold = now + 480;
         if(now - lastLeaf > 90 && Math.random() < 0.5){ lastLeaf = now; for(var li = 0; li < 2; li++) leaf(bx + (Math.random()-0.5)*44, by - 68 - Math.random()*44); }
-        clearTimeout(g._petT);
-        g._petT = setTimeout(function(){ g.setAttribute('transform', 'translate(' + bx + ' ' + by + ') scale(2) translate(' + (-bx) + ' ' + (-by) + ')'); }, 480);
       }
     });
+  }
+  function swayStep(){
+    var now = performance.now();
+    for(var i = 0; i < trees.length; i++){
+      var g = trees[i];
+      if(now > g._hold) g._tgt = 0;
+      var diff = g._tgt - g._ang;
+      if(Math.abs(diff) < 0.02){ if(g._ang !== 0){ g._ang = 0; g.setAttribute('transform', g._base); } continue; }
+      g._ang += diff * 0.16;
+      var bx = +g.getAttribute('data-bx'), by = +g.getAttribute('data-by');
+      g.setAttribute('transform', 'translate(' + bx + ' ' + by + ') scale(2) rotate(' + g._ang.toFixed(2) + ') translate(' + (-bx) + ' ' + (-by) + ')');
+    }
   }
   var hero = document.querySelector('.hero');
   hero.addEventListener('pointerdown', function(e){ petting = true; var p = toSVG(e); if(p) strokeTrees(p); });
@@ -556,6 +566,7 @@
   if(reduce){ deer.forEach(function(d){ place(d); }); return; }
   var last = performance.now();
   function tick(now){
+    swayStep();
     var dt = Math.min(0.05, (now - last)/1000); last = now;
     deer.forEach(function(d){
       var moving = d.mode === 'walk' || d.mode === 'flee';
