@@ -159,6 +159,10 @@
   .card-links{margin-top:6px;display:flex;gap:16px;font-size:14px;font-weight:600}
   .card-links a{text-decoration:none;color:var(--accent)}
   .card-links a:hover{text-decoration:underline}
+  .card-links a.notes-link{color:var(--muted);font-weight:500}
+  .strip-notes{margin-top:14px;font-size:13.5px}
+  .strip-notes a{color:var(--muted);font-weight:500;text-decoration:none}
+  .strip-notes a:hover{color:var(--accent);text-decoration:underline}
   .card.featured{grid-column:1 / -1}
   .card.featured .shot{aspect-ratio:21/9}
   .card .shot.live-shot{position:relative}
@@ -377,6 +381,7 @@
           <a class="fla-mini" href="https://swifla.vercel.app"><img src="img/swifla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>Swifla</span></a>
             <a class="fla-mini" href="https://patterfla.vercel.app"><img src="img/patterfla.jpg" alt="" width="1120" height="752" loading="lazy" decoding="async"><span>Patterfla</span></a>
         </div>
+        <p class="strip-notes"><a href="notes.html#mini-tools">Design notes: why these exist &rarr;</a></p>
       </div>
 
       <article class="card featured">
@@ -388,7 +393,7 @@
             deforms the surface geometry itself, so the refraction bends with the wave. The same wave equations
             run in JavaScript to sway the text behind the glass — one physics model, two rendering layers, zero libraries.</p>
           <p class="engine"><b>ENGINE:</b> SDF raymarching &middot; analytic wave field shared GLSL &harr; JS &middot; single file</p>
-          <div class="card-links"><a href="glass-jelly-card.html">Play with it &rarr;</a></div>
+          <div class="card-links"><a href="glass-jelly-card.html">Play with it &rarr;</a></div><a class="notes-link" href="notes.html#jelly">Design notes &rarr;</a>
         </div>
       </article>
 
@@ -401,7 +406,7 @@
             glow — computed on Canvas 2D. The genre&rsquo;s tricks were tacit knowledge; this codifies them into
             ~100 open parameters.</p>
           <p class="engine"><b>ENGINE:</b> chamfer distance transform &middot; procedural metal &amp; texture &middot; seeded, pixel-identical reproducibility</p>
-          <div class="card-links"><a href="https://pachi-eta.vercel.app">Open the tool &rarr;</a></div>
+          <div class="card-links"><a href="https://pachi-eta.vercel.app">Open the tool &rarr;</a></div><a class="notes-link" href="notes.html#gekiatsu">Design notes &rarr;</a>
         </div>
       </article>
 
@@ -413,7 +418,7 @@
           <p class="desc">Keyframe editor with image morphing, a full timeline, and exports to GIF, PNG sequences
             and MP4/WebM. Editing and export share one state model, so what you see is exactly what ships.</p>
           <p class="engine"><b>ENGINE:</b> Delaunay triangulation from scratch &middot; affine warping &middot; in-file GIF encoder</p>
-          <div class="card-links"><a href="https://tensec-iota.vercel.app">Open the tool &rarr;</a></div>
+          <div class="card-links"><a href="https://tensec-iota.vercel.app">Open the tool &rarr;</a></div><a class="notes-link" href="notes.html#tensec">Design notes &rarr;</a>
         </div>
       </article>
 
@@ -425,7 +430,7 @@
           <p class="desc">Cutout, colour, light and board layout for architectural visuals — built for the
             unglamorous last mile of image work, fast enough to feel effortless.</p>
           <p class="engine"><b>ENGINE:</b> Sobel edge-aware region growing &middot; RLE-compressed undo &middot; dual-resolution preview / export</p>
-          <div class="card-links"><a href="https://parsstudio.vercel.app">Open the tool &rarr;</a></div>
+          <div class="card-links"><a href="https://parsstudio.vercel.app">Open the tool &rarr;</a></div><a class="notes-link" href="notes.html#pars">Design notes &rarr;</a>
         </div>
       </article>
 
@@ -437,7 +442,7 @@
           <p class="punch">A chat made of puffy, glossy letters.</p>
           <p class="desc">Co-developed with my two-year-old niece. She wanted to play on a smartphone, so we built her a chat she could drive — messages rendered as candy-gloss emoji type, a plain sentence turned into a sticker you want to touch.</p>
           <p class="engine"><b>ENGINE:</b> procedural gloss &amp; bevel lettering &middot; per-glyph layout</p>
-          <div class="card-links"><a href="https://emojichat.vercel.app">Open the tool &rarr;</a></div>
+          <div class="card-links"><a href="https://emojichat.vercel.app">Open the tool &rarr;</a></div><a class="notes-link" href="notes.html#emoji">Design notes &rarr;</a>
         </div>
       </article>
       

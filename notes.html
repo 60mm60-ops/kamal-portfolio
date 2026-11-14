@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design notes — KAMAL</title>
+<meta name="description" content="Design notes on each tool, in the maker's own words: Glass Jelly Card, Gekiatsu Moji Kobo, 10sec, PARS STUDIO, Emoji Chat and the fla mini tools.">
+<link rel="canonical" href="https://kamal-portfolio-amber.vercel.app/notes.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 92,38 50,96 8,38' fill='%23E8497F'/%3E%3Cpolygon points='50,4 92,38 50,52 8,38' fill='%23FF8FB5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF7F1;
+    --ink:#26222E;
+    --muted:#6E6879;
+    --accent:#E8497F;
+    --accent2:#7C5CD6;
+    --line:#EAE2D6;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --disp:'Space Grotesk',sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(253,246,238,.84);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(38,35,43,.08)}
+  nav .wrap{max-width:1160px;display:flex;justify-content:space-between;align-items:center;padding-top:13px;padding-bottom:13px}
+  .logo{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:.02em;text-decoration:none}
+  .logo span{color:var(--accent)}
+  .nav-back{font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+  .nav-back:hover{color:var(--ink)}
+  main{padding:130px 0 40px}
+  .eyebrow{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.14em;color:var(--accent)}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(32px,5vw,46px);letter-spacing:-.01em;margin:12px 0 8px}
+  .lede{color:var(--muted);font-size:16.5px;margin-bottom:14px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:12.5px;margin:22px 0 6px}
+  .toc a{color:var(--accent2);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  section{padding:44px 0 40px;border-bottom:1px solid var(--line);scroll-margin-top:84px}
+  section:last-of-type{border-bottom:none}
+  .kind{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--accent2)}
+  h2{font-family:var(--disp);font-size:27px;font-weight:700;margin:6px 0 14px}
+  section p{font-size:17px;line-height:1.85;color:#353040}
+  .tool-link{display:inline-block;margin-top:18px;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none}
+  .tool-link:hover{text-decoration:underline}
+  footer{padding:34px 0 54px;color:var(--muted);font-size:13.5px}
+  footer a{color:var(--accent);text-decoration:none;font-weight:600}
+  footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="/">KAMAL<span>.</span></a>
+    <a class="nav-back" href="/#works">&larr; Back to portfolio</a>
+  </div>
+</nav>
+<main>
+  <div class="wrap">
+    <span class="eyebrow">DESIGN NOTES</span>
+    <h1>Design notes</h1>
+    <p class="lede">Why each tool exists, and how it was designed — in the maker&rsquo;s own words.</p>
+    <div class="toc">
+      <a href="#jelly">Glass Jelly</a>
+      <a href="#gekiatsu">Pachinko lettering</a>
+      <a href="#tensec">10sec</a>
+      <a href="#pars">PARS STUDIO</a>
+      <a href="#emoji">Emoji Chat</a>
+      <a href="#mini-tools">Mini tools</a>
+    </div>
+
+    <section id="jelly">
+      <span class="kind">GLASS JELLY CARD</span>
+      <h2>Glass Jelly</h2>
+      <p>Can a flat surface be turned into water? That was the starting point. It probably can. But when you touch a screen, your finger doesn&rsquo;t sink in. So what if the water were stretched across the screen like a thin film? That was the feeling I built it with. Still water doesn&rsquo;t look like water, though. And a screen is hard. So at rest it reads as frosted glass, and when you touch it, the thin film of water trembles. A single flat colour would have felt too digital, so the colours of the ripples change at random. But the letters behind the film stay perfectly still. I wanted the tactility of the analogue and the expression of the digital, together.</p>
+      <a class="tool-link" href="glass-jelly-card.html">Play with it &rarr;</a>
+    </section>
+
+    <section id="gekiatsu">
+      <span class="kind">GEKIATSU MOJI KOBO</span>
+      <h2>Pachinko lettering</h2>
+      <p>A silly grumble I posted on Twitter went viral. I had been designing the cover of a romance novel I&rsquo;d written, to put it up online — and everything I designed came out looking like pachinko. I attached examples of my design work to the thread, and that went viral too. People looking at it said they had no idea how something like that is made. Neither did I, when I was starting out. Pachinko lettering is done completely differently by every person who does it, and there is almost no handing down of the know-how. Just make it loud, glittering, like something good is about to happen — that&rsquo;s what matters. I unpicked that process and made it into a tool. Parameters alone don&rsquo;t make it look the part, so I made it possible to paint effects in with a brush as well. What I cared about most was the metallic reflection, when the lettering is made three-dimensional. Computing metal-like reflections, though, is hard work — and more than anything, it gets heavy. So I made a brush that draws lines like reflections just by stroking it across. The lines follow the angle.</p>
+      <a class="tool-link" href="https://pachi-eta.vercel.app">Open the tool &rarr;</a>
+    </section>
+
+    <section id="tensec">
+      <span class="kind">10SEC</span>
+      <h2>10sec</h2>
+      <p>A classmate at school made videos as a hobby, so I built this as a tool to support her. I disliked having to use After Effects just for simple effects, so I made a tool where rich particles are easy to make. (The classmate, as it happened, was thoroughly analogue-minded, and had no need of my tool.)</p>
+      <a class="tool-link" href="https://tensec-iota.vercel.app">Open the tool &rarr;</a>
+    </section>
+
+    <section id="pars">
+      <span class="kind">PARS STUDIO</span>
+      <h2>PARS STUDIO</h2>
+      <p>When I presented an assignment at vocational school, a classmate said she didn&rsquo;t really understand the rules of layout. PowerPoint has templates, but it has nothing that actually assists with layout. To make presentation boards easier to build, I added simple image-editing functions and a layout function with a grid system, so that a decent presentation board can be made on a phone or a tablet.</p>
+      <a class="tool-link" href="https://parsstudio.vercel.app">Open the tool &rarr;</a>
+    </section>
+
+    <section id="emoji">
+      <span class="kind">EMOJI CHAT</span>
+      <h2>Emoji Chat</h2>
+      <p>My two-year-old niece wants to use the same tools her older sisters and the adults use. But she&rsquo;s two, and she can&rsquo;t use them well. When someone finally lends her a phone, she burst-shoots the camera, or ends up calling somebody. So she complained to her aunt. Her aunt, as a developer, built a pretend chat that a two-year-old can enjoy playing with. She can&rsquo;t read yet. But she can tap. And she understands what the emoji mean.</p>
+      <a class="tool-link" href="https://emojichat.vercel.app">Open the tool &rarr;</a>
+    </section>
+
+    <section id="mini-tools">
+      <span class="kind">MINI TOOLS — THE FLA SERIES</span>
+      <h2>Mini tools</h2>
+      <p>When I was doing design work, the designer at the next desk complained that having to go and look for gradient references was a nuisance. That grumble was the starting point for the colour tools.</p>
+      <a class="tool-link" href="/#works">See the mini tools &rarr;</a>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="wrap"><a href="/#works">&larr; Back to portfolio</a></div>
+</footer>
+</body>
+</html>
