@@ -90,6 +90,10 @@
   .sec-tag{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--teal);font-weight:600}
   h2{font-size:clamp(24px,3.6vw,34px);font-weight:900}
   .sec-lead{color:var(--muted);max-width:720px;margin-bottom:40px}
+  .about-body{max-width:720px;color:var(--muted);line-height:2}
+  .about-body p{margin-bottom:14px}
+  .spec-h{font-size:15.5px;color:var(--ink);margin:26px 0 2px}
+  .about-body .spec-p{margin-bottom:0}
 
   .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
   .svc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 24px}
@@ -178,6 +182,7 @@
   <div class="wrap">
     <a class="logo" href="#top">KAMAL</a>
     <div class="nav-links">
+      <a href="#about">私について</a>
       <a href="#services">対応可能な業務</a>
       <a href="#works">制作物</a>
       <a href="#process">仕事の進め方</a>
@@ -218,6 +223,23 @@
 </header>
 
 <main>
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-tag">ABOUT</span><h2>私について</h2></div>
+    <div class="about-body">
+      <p>活動名「かまる」です。※本名は契約時にお伝えしております。<br>
+      奈良在住のデザイナー／開発者です。</p>
+      <p>印刷物デザイン（DTP）16年の経験をもとに、チラシ・カタログ・展示パネルなどの印刷物から、Webサイト、ブラウザで動く業務ツールまで制作しています。</p>
+      <p>勤務先・クライアントの制作物は守秘のため実物を載せることができませんが、対応可能な業務と仕事の進め方はこのページにまとめています。ご依頼は完全リモートで、全国から承っています。</p>
+      <h3 class="spec-h">使用可能ソフト</h3>
+      <p class="spec-p">Adobe Creative Cloud 全般（Illustrator、Photoshop、InDesign、After Effects、Premiere Pro ほか）、AutoCAD、JW-CAD</p>
+      <h3 class="spec-h">使用言語</h3>
+      <p class="spec-p">JavaScript、TypeScript、HTML、CSS、PHP、Python、GLSL（WebGL）</p>
+    </div>
+  </div>
+</section>
+
 <!-- ================= SERVICES ================= -->
 <section id="services">
   <div class="wrap">
