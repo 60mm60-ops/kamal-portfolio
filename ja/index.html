@@ -87,6 +87,14 @@
 
   /* ---------- SECTIONS ---------- */
   section{padding:88px 0 8px}
+  h1,h2{text-wrap:balance}
+  .hero-sub,.lead,.hero-intro{text-wrap:pretty}
+  .nb{white-space:nowrap}
+  ::selection{background:#0E9594;color:#fff}
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+  .rv.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none;transition:none}}
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #0E9594;outline-offset:2px}
   #services{padding-top:29px}
   .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
   .sec-tag{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--teal);font-weight:600}
@@ -105,10 +113,13 @@
 
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:22px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+  .card{transition:transform .35s cubic-bezier(.22,.61,.36,1),box-shadow .35s cubic-bezier(.22,.61,.36,1)}
+  @media(hover:hover){.card:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(12,43,51,.10)}}
+  @media (prefers-reduced-motion: reduce){.card{transition:none}.card:hover{transform:none}}
   .card .shot{display:block;aspect-ratio:1120/752;overflow:hidden;background:var(--mint)}
   .card .shot img{width:100%;height:100%;object-fit:cover;display:block}
   .card-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:8px;flex:1}
-  .card-top{display:flex;justify-content:space-between;align-items:baseline;gap:2px 10px;flex-wrap:wrap}
+  .card-top{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
   .card-top h3{font-size:19px;font-weight:700}
   .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--teal);white-space:nowrap}
   .punch{font-weight:700;color:#075E63}
@@ -140,6 +151,7 @@
   .contact .gh-line{margin-top:14px}
   .contact .gh-line a{color:#A9F0D8;font-weight:700;text-decoration:none}
   .contact-form{margin-top:30px;display:grid;gap:16px;max-width:560px}
+  @media(min-width:960px){.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);column-gap:64px}.contact>*{grid-column:1}.contact .contact-form{grid-column:2;grid-row:1/span 8;margin-top:8px;max-width:none}.contact .sent-note{grid-column:2}}
   .contact-form[hidden]{display:none}
   .contact-form label{display:grid;gap:6px;font-size:13.5px;font-weight:500}
   .contact-form .req{color:#FFB3CB;font-style:normal;font-size:11.5px;margin-left:6px}
@@ -149,7 +161,11 @@
   .sent-note{margin-top:30px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:14px;padding:22px 24px;max-width:560px}
   .sent-note .big{font-size:18px;font-weight:700}
 
-  footer{padding:38px 0 48px;color:var(--muted);font-size:13.5px}
+  footer{padding:38px 0 48px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line)}
+  .foot-row{display:flex;justify-content:space-between;align-items:flex-end;gap:14px 24px;flex-wrap:wrap}
+  .foot-links{display:flex;gap:22px;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+  .foot-links a{color:var(--muted);text-decoration:none}
+  .foot-links a:hover{color:var(--ink)}
   footer .mono{font-family:var(--mono);letter-spacing:.14em;color:var(--ink)}
   nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(12,43,51,.08)}
   nav .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:13px;padding-bottom:13px}
@@ -208,7 +224,7 @@
   <div class="wrap hero-inner">
     <h1><span class="hl">仕組み</span>で<br>デザインを作る。</h1>
     <p class="hero-sub">
-      長年のデザイン経験を、プロシージャル設計に落とし込むのを得意としています。
+      長年のデザイン経験を、プロシージャル設計に落とし込むのを<span class="nb">得意としています。</span>
       誰もが簡単に触れるツールごと構築することで、再現性のある出力を可能にします。
     </p>
     <p class="hero-intro">このサイトは、奈良在住のデザイナー／開発者 KAMAL のポートフォリオです。デザイン・印刷物・Webツールの制作を承っています。</p>
@@ -406,9 +422,15 @@
 </main>
 
 <footer>
-  <div class="wrap">
-    <p class="mono">KAMAL — NARA, JAPAN</p>
-    <p style="margin-top:6px">このページの作品は、すべてブラウザでそのまま動きます。インストールも登録もいりません。触ってみてください。</p>
+  <div class="wrap foot-row">
+    <div>
+      <p class="mono">KAMAL — NARA, JAPAN</p>
+      <p style="margin-top:6px">このページの作品は、すべてブラウザでそのまま動きます。インストールも登録もいりません。触ってみてください。</p>
+    </div>
+    <div class="foot-links">
+      <a href="https://github.com/60mm60-ops" target="_blank" rel="noopener">GitHub</a>
+      <a href="#top">トップへ戻る ↑</a>
+    </div>
   </div>
 </footer>
 
@@ -672,5 +694,8 @@
 })();
 </script>
 
+<script>
+(function(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;var els=document.querySelectorAll('.sec-head,.card,.svc,.step,.metric,.motto,.duo>*,.fla-strip,.contact,.about-body>*,.print-grid>*');els.forEach(function(e){e.classList.add('rv')});var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.unobserve(en.target)}})},{threshold:.1});els.forEach(function(e){io.observe(e)});setTimeout(function(){els.forEach(function(e){e.classList.add('on')})},2500);})();
+</script>
 </body>
 </html>
