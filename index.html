@@ -136,6 +136,13 @@
 
   /* ---------- sections ---------- */
   section{padding:88px 0 8px}
+  h1,h2{text-wrap:balance}
+  .hero-sub,.lead{text-wrap:pretty}
+  ::selection{background:#E84393;color:#fff}
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+  .rv.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none;transition:none}}
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #E84393;outline-offset:2px}
   .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:10px}
   .sec-tag{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.14em;color:var(--accent)}
   h2{font-family:var(--disp);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
@@ -151,7 +158,7 @@
   .card .shot img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform .4s ease}
   .card:hover .shot img{transform:scale(1.03)}
   .card-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:8px;flex:1}
-  .card-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .card-top{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
   .card h3{font-family:var(--disp);font-size:21px;font-weight:700}
   .card .kind{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--accent2);white-space:nowrap}
   .card .punch{font-weight:600;font-size:15.5px}
@@ -203,7 +210,10 @@
 .contact .gh-line a{font-family:var(--mono);font-size:13.5px;color:#FFB3CB;text-decoration:none;border-bottom:1px solid rgba(255,179,203,.45);padding-bottom:2px}
 .contact .gh-line a:hover{color:#fff}
   .contact .btn-primary{background:var(--accent);box-shadow:0 10px 24px rgba(232,73,127,.35)}
-  footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:13px}
+  footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+  .foot-links{margin-top:14px;display:flex;justify-content:center;gap:22px;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+  .foot-links a{color:var(--muted);text-decoration:none}
+  .foot-links a:hover{color:var(--ink)}
   footer .mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em}
 @media (max-height:540px){.hero-content{padding-bottom:124px}.hero-hint{white-space:normal;max-width:92vw;text-align:center;line-height:1.55;bottom:12px}}
 .contact-form{max-width:36em;margin:26px auto 0;text-align:left}
@@ -239,9 +249,10 @@
 .fla-strip-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .fla-strip-tag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;color:#B4552D;font-weight:600}
 .fla-strip-head p{font-size:14.5px;margin:0;line-height:1.7}
-.fla-minis{display:flex;gap:20px;flex-wrap:wrap}
-.fla-mini{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:inherit;width:78px}
-.fla-mini img{width:64px;height:64px;object-fit:cover;border-radius:16px;border:1px solid #E4DFD2;transition:transform .18s ease}
+.fla-minis{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+@media(max-width:640px){.fla-minis{grid-template-columns:repeat(3,1fr)}}
+.fla-mini{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.fla-mini img{width:72px;height:72px;object-fit:cover;border-radius:16px;border:1px solid #E4DFD2;transition:transform .18s ease}
 .fla-mini:hover img{transform:translateY(-3px)}
 .fla-mini span{font-size:12.5px;font-weight:600}
 
@@ -579,6 +590,10 @@
   <div class="wrap">
     <p class="mono">KAMAL — NARA, JAPAN</p>
     <p style="margin-top:6px">Every tool on this page runs in your browser. No install, no sign-up — just touch.</p>
+    <div class="foot-links">
+      <a href="https://github.com/60mm60-ops" target="_blank" rel="noopener">GitHub</a>
+      <a href="#top">Back to top ↑</a>
+    </div>
   </div>
 </footer>
 
@@ -933,5 +948,8 @@
 })();
 </script>
 
+<script>
+(function(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;var els=document.querySelectorAll('.sec-head,.card,.svc,.step,.metric,.motto,.duo>*,.fla-strip,.contact,.about-body>*,.print-grid>*');els.forEach(function(e){e.classList.add('rv')});var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.unobserve(en.target)}})},{threshold:.1});els.forEach(function(e){io.observe(e)});setTimeout(function(){els.forEach(function(e){e.classList.add('on')})},2500);})();
+</script>
 </body>
 </html>
